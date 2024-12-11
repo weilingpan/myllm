@@ -1,9 +1,10 @@
 import logging
 from datetime import datetime
-logging.basicConfig(filename=f'{datetime.now()}.log', 
-                    level=logging.INFO, 
-                    format='%(asctime)s - %(message)s', 
-                    datefmt="%Y-%m-%d %H:%M:%S")
+logging.basicConfig(
+    # filename=f'{datetime.now()}.log', 
+    level=logging.INFO, 
+    format='%(asctime)s - %(message)s', 
+    datefmt="%Y-%m-%d %H:%M:%S")
 
 from llama_index.core import Settings
 from llama_index.core.workflow import Event
@@ -21,9 +22,9 @@ from llama_index.core.workflow import (
 )
 
 from llama_index.llms.openai import OpenAI
-from llama_index.llms.azure_openai import AzureOpenAI
+# from llama_index.llms.azure_openai import AzureOpenAI
 from llama_index.embeddings.openai import OpenAIEmbedding
-from llama_index.embeddings.azure_openai import AzureOpenAIEmbedding
+# from llama_index.embeddings.azure_openai import AzureOpenAIEmbedding
 
 
 from llama_index.core.schema import (
@@ -50,7 +51,8 @@ from llama_index.core import (
 
 from llama_index.core.response.pprint_utils import pprint_response
 
-os.environ["OPENAI_API_KEY"] = "None"
+from env import OPENAI_API_KEY as CUSTOM_OPENAI_API_KEY
+os.environ["OPENAI_API_KEY"] = CUSTOM_OPENAI_API_KEY
 
 top_k = 10
 llm_model = "gpt-4o" #"gpt-4o-mini"
@@ -397,7 +399,7 @@ class CitationQueryEngineWorkflow(Workflow):
 
 async def main():
     # Create Index
-    folder = "./data/elec"
+    folder = "./data/sample"
     if not os.path.exists("./citation2"):
         logging.info(f"Downloading and indexing documents from {folder}")
         documents = SimpleDirectoryReader(folder).load_data()
@@ -425,11 +427,10 @@ async def main():
     logging.info(f"Init workflow ...")
     workflow = CitationQueryEngineWorkflow(timeout=30, verbose=False)
     # custom_query = "What information do you have"
-    # custom_query = "人工智慧分級介紹"
-    # custom_query = "人工智慧分級介紹, 請列出參考來源檔案名稱"
+    custom_query = "人工智慧分級介紹"
     # custom_query = "神經網路機器翻譯系統是誰發明的？"
     # custom_query = "what is langchain?"
-    custom_query = "當連接器電源pin的電流分配不均, 可能是什麼原因?"
+    # custom_query = "當連接器電源pin的電流分配不均, 可能是什麼原因?"
 
     result = await workflow.run(query=custom_query, index=index)
     logging.info(f"\nResult:\n{result}\n")

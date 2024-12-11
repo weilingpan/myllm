@@ -246,7 +246,7 @@ class CitationQueryEngineWorkflow(Workflow):
                 print(f"cleaning input ...")
                 new_node.node.text = text
                 new_node.metadata["file_path"] = node.node.metadata["file_name"]
-                print(new_node.__dict__)
+                # print(new_node.__dict__)
                 new_nodes.append(new_node)
         return CreateCitationsEvent(nodes=new_nodes)
 
@@ -273,8 +273,8 @@ llm_model = "gpt-4o-mini"
 embedding_model = "text-embedding-3-small"
 async def main():
     # Set Model info
-    
-    os.environ["OPENAI_API_KEY"] = "None"
+    from env import OPENAI_API_KEY as CUSTOM_OPENAI_API_KEY
+    os.environ["OPENAI_API_KEY"] = CUSTOM_OPENAI_API_KEY
     
 
     Settings.llm = OpenAI(model=llm_model,temperature=0)
@@ -316,7 +316,7 @@ async def main():
 
     # Run the Workflow!
     print(f"Init workflow ...")
-    workflow = CitationQueryEngineWorkflow()
+    workflow = CitationQueryEngineWorkflow(timeout=30, verbose=False)
     # custom_query = "What information do you have"
     custom_query = "人工智慧分級介紹"
     # custom_query = "神經網路機器翻譯系統是誰發明的？"
