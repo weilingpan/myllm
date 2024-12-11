@@ -275,6 +275,7 @@ async def main():
     # Set Model info
     
     os.environ["OPENAI_API_KEY"] = "None"
+    
 
     Settings.llm = OpenAI(model=llm_model,temperature=0)
     Settings.embed_model = OpenAIEmbedding(model=embedding_model) #"text-embedding-3-small"
