@@ -5,7 +5,10 @@
 ```
 
 
-這裡是一段llm response
-很多文字[^註腳標籤]
-[^註腳標籤]: reference.pdf
-    如果註腳超過一個段落，第二個段落開始請記得縮排 4 個空白字元。
+Here is a footnote reference,[^1][^2] and another.[^longnote]
+
+[^1]: Here is the footnote.
+[^2]: Here is the footnote.
+[^longnote]: Here's one with multiple blocks.
+    Subsequent paragraphs are indented to show that they
+belong to the previous footnote.
