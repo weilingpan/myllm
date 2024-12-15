@@ -451,8 +451,8 @@ async def main():
         node_info = {
             "id": result.source_nodes[idx].id_,
             "file_name": result.source_nodes[idx].metadata.get("file_name"),
-            "start_char_idx": result.source_nodes[idx].node.start_char_idx,
-            "end_char_idx": result.source_nodes[idx].node.end_char_idx,
+            "start_char_idx": result.source_nodes[idx].node.start_char_idx, #Start char index of the node.
+            "end_char_idx": result.source_nodes[idx].node.end_char_idx, #End char index of the node.
             "score": result.source_nodes[idx].score,
             "doc_text": result.source_nodes[idx].node.get_text(),
             "page_label": result.source_nodes[idx].metadata.get("page_label", None)
