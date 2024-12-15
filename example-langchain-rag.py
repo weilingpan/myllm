@@ -142,8 +142,8 @@ print("===> 完成建立 RAG chain")
 query = "人工智慧的分級介紹?"
 print(f"===> Question: {query}")
 result = rag_chain.invoke(query)
-# print(result)
-print(result.__dict__)
+print(result)
+# print(result.__dict__)
 
 # result = qa.invoke(query)
 # print(f"===> Answer: {result}")
