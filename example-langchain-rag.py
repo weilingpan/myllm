@@ -1,4 +1,5 @@
 # reference: https://medium.com/@cch.chichieh/rag%E5%AF%A6%E4%BD%9C%E6%95%99%E5%AD%B8-langchain-llama2-%E5%89%B5%E9%80%A0%E4%BD%A0%E7%9A%84%E5%80%8B%E4%BA%BAllm-d6838febf8c4
+# reference: https://medium.com/jimmy-wang/langchain-rag%E5%AF%A6%E6%88%B0%E7%AC%AC%E4%B8%80%E7%AB%99-efe975f4c3bd
 
 import os
 
@@ -14,6 +15,8 @@ from langchain import hub
 from langchain_community.vectorstores import Chroma
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
+from langchain.prompts import PromptTemplate
+
 from langchain.chains import RetrievalQA
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
@@ -72,8 +75,8 @@ print(f"===> Creating embeddings...")
 # model_kwargs = {'device': 'cpu'}
 # embeddings = HuggingFaceEmbeddings(model_name=model_name,
 #                                   model_kwargs=model_kwargs)
-embeddings = OpenAIEmbeddings(model="text-embedding-3-large")
-# embeddings = OpenAIEmbeddings()
+# embeddings = OpenAIEmbeddings(model="text-embedding-3-large")
+embeddings = OpenAIEmbeddings()
 
 
 # 4. Create Vector Store
@@ -86,35 +89,44 @@ vectordb = Chroma.from_documents(
     persist_directory=persist_directory)
 
 # 5. Setup LLM
-print(f"===> Setup LLM...")
+print(f"===> Setup LLM with prompt...")
 llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
-
 # system_template = "You are a helpful assistant."
 # prompt_template = ChatPromptTemplate.from_messages(
 #     [("system", system_template), 
 #      ("user", "{text}")]
 # )
+# prompt_template = """Use the following pieces of context to answer the question at the end. If you don't know the answer, just say that you don't know, don't try to make up an answer.
+
+# {context}
+
+# Question: {question}
+# Answer in Italian:"""
+# prompt = PromptTemplate(
+#     input_variables=["context", "question"],
+#     template=prompt_template,
+# )
 
 prompt = hub.pull("rlm/rag-prompt")
+print(f"Prompt:\n{prompt}")
 
-# 6. Create LLM Chain
-# print(f"===> Create LLM Chain...")
 # llm_chain = prompt | llm
 # question = "人工智慧的分級?"
 # llm_chain.invoke({"question": question})
 
 
-
-# 7. 結合 Retriever 與 QA 與 llm chain
-print(f"===> Integrate Retriever with QA...")
+# 6. Create retriever
+print(f"===> Create retriever...")
 retriever = vectordb.as_retriever()
+
+# 7. Integrate Retrieval with QA
+print(f"===> Integrate Retrieval with QA...")
 # qa = RetrievalQA.from_chain_type(
 #     llm=llm_chain, 
 #     chain_type="stuff", 
 #     retriever=retriever, 
 #     verbose=True
 # )
-
 
 def format_docs(docs):
     return "\n\n".join(doc.page_content for doc in docs)
@@ -125,12 +137,13 @@ rag_chain = (
     | llm
     | StrOutputParser()
 )
-print("===> 完成建立RAG")
+print("===> 完成建立 RAG chain")
 
-query = "人工智慧的分級?"
+query = "人工智慧的分級介紹?"
 print(f"===> Question: {query}")
 result = rag_chain.invoke(query)
-print(result)
+# print(result)
+print(result.__dict__)
 
 # result = qa.invoke(query)
 # print(f"===> Answer: {result}")
