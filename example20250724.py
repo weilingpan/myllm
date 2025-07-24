@@ -159,26 +159,36 @@ model_name = "gpt-4.1-nano"
 # print(responses)
 
 
-### Send multiple completion calls to 1 model
-responses = batch_completion(
-    model=model_name,
-    messages = [
-        [
-            {
-                "role": "user",
-                "content": "good morning? "
-            }
-        ],
-        [
-            {
-                "role": "user",
-                "content": "what's the time? "
-            }
-        ]
-    ]
+client = OpenAI(api_key="sk-1234", base_url="http://localhost:4000")
+response = client.chat.completions.create(
+    model="gpt-4.1-nano,gpt-4.1-mini",
+    messages=[
+        {"role": "user", "content": "hello"}
+    ],
 )
-print(f"Total responses: {len(responses)}")
-for idx, response in enumerate(responses):
-    print(f"\n=============== 第 {idx} 個結果 ===============")
-    # print(response)
-    print(response.choices[0].message.content)  
+print(response)
+
+
+### Send multiple completion calls to 1 model
+# responses = batch_completion(
+#     model=model_name,
+#     messages = [
+#         [
+#             {
+#                 "role": "user",
+#                 "content": "good morning? "
+#             }
+#         ],
+#         [
+#             {
+#                 "role": "user",
+#                 "content": "what's the time? "
+#             }
+#         ]
+#     ]
+# )
+# print(f"Total responses: {len(responses)}")
+# for idx, response in enumerate(responses):
+#     print(f"\n=============== 第 {idx} 個結果 ===============")
+#     # print(response)
+#     print(response.choices[0].message.content)  
