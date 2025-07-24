@@ -97,7 +97,8 @@ client = OpenAI(
 """ OpenAI Completions API """
 ## batch
 completion = client.completions.create(
-    model="gpt-3.5-turbo-instruct", # 不是所有model都支援chat completions
+    # 不是所有model都支援 v1/completions (model endpoint compatibility reference: https://platform.openai.com/docs/models)
+    model="gpt-3.5-turbo-instruct",
     prompt=["what is python", "how are you?"],
     # n=2,
     stream=False,
