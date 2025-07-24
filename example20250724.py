@@ -26,7 +26,9 @@ model_name = "gpt-4.1-nano"
 model = ChatOpenAI(model=model_name, streaming=False)
 response = model.batch(["hello", "how are you?"])
 print(f"Batch response: {len(response)} items")
-print(response)
+for i, resp in enumerate(response):
+    print(f"Response {i+1}: {resp.content}")
+# print(response)
 """
 [
     AIMessage(
