@@ -1,7 +1,12 @@
 import os
 import asyncio
 from openai import OpenAI
-from litellm import completion, acompletion
+from litellm import (
+    completion, 
+    acompletion, 
+    batch_completion_models_all_responses,
+    batch_completion
+)
 from langchain_openai import ChatOpenAI
 
 from env import OPENAI_API_KEY
@@ -117,15 +122,15 @@ model_name = "gpt-4.1-nano"
 
 
 """ litellm """
-messages = [
-    {
-        "content": "Hello, how are you?",
-        "role": "user"
-    }
-]
+# messages = [
+#     {
+#         "content": "Hello, how are you?",
+#         "role": "user"
+#     }
+# ]
 
-response = completion(model=f"openai/{model_name}", messages=messages)
-print(response)
+# response = completion(model=f"openai/{model_name}", messages=messages)
+# print(response)
 
 # ##### Async 
 # async def test_get_response():
@@ -142,3 +147,38 @@ print(response)
 # response = completion(model=f"openai/{model_name}", messages=messages, stream=True)
 # for part in response:
 #     print(part.choices[0].delta.content or "")
+
+
+
+##### batch
+### completion call to many models: Return All Responses
+# responses = batch_completion_models_all_responses(
+#     models=[f"openai/{model_name}", "openai/gpt-4.1-mini"], 
+#     messages=[{"role": "user", "content": "hello"}]
+# )
+# print(responses)
+
+
+### Send multiple completion calls to 1 model
+responses = batch_completion(
+    model=model_name,
+    messages = [
+        [
+            {
+                "role": "user",
+                "content": "good morning? "
+            }
+        ],
+        [
+            {
+                "role": "user",
+                "content": "what's the time? "
+            }
+        ]
+    ]
+)
+print(f"Total responses: {len(responses)}")
+for idx, response in enumerate(responses):
+    print(f"\n=============== 第 {idx} 個結果 ===============")
+    # print(response)
+    print(response.choices[0].message.content)  
