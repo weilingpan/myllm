@@ -22,13 +22,13 @@ model_name = "gpt-4.1-nano"
 #     print(chunk)
 
 
-### batch
-model = ChatOpenAI(model=model_name, streaming=False)
-response = model.batch(["hello", "how are you?"])
-print(f"Batch response: {len(response)} items")
-for i, resp in enumerate(response):
-    print(f"Response {i+1}: {resp.content}")
-# print(response)
+# ### batch
+# model = ChatOpenAI(model=model_name, streaming=False)
+# response = model.batch(["hello", "how are you?"])
+# print(f"Batch response: {len(response)} items")
+# for i, resp in enumerate(response):
+#     print(f"Response {i+1}: {resp.content}")
+# # print(response)
 """
 [
     AIMessage(
@@ -69,11 +69,16 @@ for i, resp in enumerate(response):
 
 
 """OpenAI Client"""
-# client = OpenAI(
-#     api_key=OPENAI_API_KEY,
-# )
+client = OpenAI(
+    api_key=OPENAI_API_KEY,
+)
 
-### invoke
+# models = client.models.list()
+# for model in models.data:
+#     print(f"Model ID: {model.id}")
+
+
+""" OpenAI Chat Completions API """
 # completion = client.chat.completions.create(
 #     model=model_name,
 #     messages=[
@@ -82,7 +87,25 @@ for i, resp in enumerate(response):
 #             "content": "hello",
 #         }
 #     ],
+#     stream=False,
+#     max_tokens=100
 # )
 
-# print(completion.choices[0].message.content)
+# print(completion.choices) #[0].message.content
 
+
+""" OpenAI Completions API """
+## batch
+completion = client.completions.create(
+    model="gpt-3.5-turbo-instruct", # 不是所有model都支援chat completions
+    prompt=["what is python", "how are you?"],
+    # n=2,
+    stream=False,
+    # logprobs=3,
+    max_tokens=50
+)
+
+print(f"Total choices: {len(completion.choices)}")
+for idx, result in enumerate(completion.choices):
+    print(f"\n=============== 第 {idx} 個結果 ===============")
+    print(result.text)
