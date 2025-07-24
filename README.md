@@ -84,3 +84,6 @@ curl --location 'http://localhost:4000/chat/completions' \
     ]
 }'
 ```
+
+
+create a batch file: https://docs.litellm.ai/docs/proxy/managed_batches
