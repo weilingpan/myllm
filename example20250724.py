@@ -1,5 +1,7 @@
 import os
+import asyncio
 from openai import OpenAI
+from litellm import completion, acompletion
 from langchain_openai import ChatOpenAI
 
 from env import OPENAI_API_KEY
@@ -69,9 +71,9 @@ model_name = "gpt-4.1-nano"
 
 
 """OpenAI Client"""
-client = OpenAI(
-    api_key=OPENAI_API_KEY,
-)
+# client = OpenAI(
+#     api_key=OPENAI_API_KEY,
+# )
 
 # models = client.models.list()
 # for model in models.data:
@@ -95,18 +97,48 @@ client = OpenAI(
 
 
 """ OpenAI Completions API """
-## batch
-completion = client.completions.create(
-    # 不是所有model都支援 v1/completions (model endpoint compatibility reference: https://platform.openai.com/docs/models)
-    model="gpt-3.5-turbo-instruct",
-    prompt=["what is python", "how are you?"],
-    # n=2,
-    stream=False,
-    # logprobs=3,
-    max_tokens=50
-)
+# ## batch
+# completion = client.completions.create(
+#     # 不是所有model都支援 v1/completions (model endpoint compatibility reference: https://platform.openai.com/docs/models)
+#     model="gpt-3.5-turbo-instruct",
+#     prompt=["what is python", "how are you?"],
+#     # n=2,
+#     stream=False,
+#     # logprobs=3,
+#     max_tokens=50
+# )
 
-print(f"Total choices: {len(completion.choices)}")
-for idx, result in enumerate(completion.choices):
-    print(f"\n=============== 第 {idx} 個結果 ===============")
-    print(result.text)
+# print(f"Total choices: {len(completion.choices)}")
+# for idx, result in enumerate(completion.choices):
+#     print(f"\n=============== 第 {idx} 個結果 ===============")
+#     print(result.text)
+
+
+
+
+""" litellm """
+messages = [
+    {
+        "content": "Hello, how are you?",
+        "role": "user"
+    }
+]
+
+response = completion(model=f"openai/{model_name}", messages=messages)
+print(response)
+
+# ##### Async 
+# async def test_get_response():
+#     user_message = "Hello, how are you?"
+#     messages = [{"content": user_message, "role": "user"}]
+#     response = await acompletion(model=f"openai/{model_name}", messages=messages)
+#     return response
+
+# response = asyncio.run(test_get_response())
+# print(response)
+
+
+# ##### streaming
+# response = completion(model=f"openai/{model_name}", messages=messages, stream=True)
+# for part in response:
+#     print(part.choices[0].delta.content or "")
