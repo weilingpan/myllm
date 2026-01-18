@@ -2,3 +2,4 @@ openai
 mem0ai
 pymilvus
 milvus-lite
+langgraph==0.0.38
