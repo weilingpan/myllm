@@ -26,10 +26,10 @@ def get_openai_client():
 
 
 def get_config(
-        database_name="test_mem0_db", 
-        collection_name="test_mem0_collection",
-        model_name="gpt-5.2-2025-12-11",
-        embedding_model="text-embedding-3-large"):
+        database_name: str, 
+        collection_name: str,
+        model_name: str,
+        embedding_model: str):
     return {
         # https://github.com/mem0ai/mem0/blob/dba7f0458aeb50aa7078d36eaefa2405afbee620/mem0/configs/vector_stores/milvus.py#L22
         "vector_store": {
@@ -124,7 +124,12 @@ def search_memory(m, user_id: str, query: str, top_k: int = 5):
     return memories
 
 
-def chat_with_memory(client, m, user_id: str, text: str, model_name="gpt-4o"):
+def chat_with_memory(
+        client,
+        m,
+        user_id: str,
+        text: str,
+        model_name: str):
     system_prompt = f"You are a helpful AI. Answer the question based on query."
 
     memories = get_memory(m, user_id)
@@ -155,18 +160,25 @@ def chat_with_memory(client, m, user_id: str, text: str, model_name="gpt-4o"):
 def main():
     database_name = "test_mem0_db"
     collection_name = "test_mem0_collection"
+    model_name = "gpt-5.2-2025-12-11"
+    embedding_model = "text-embedding-3-large"
 
-    memory_config = get_config(database_name, collection_name)
+    memory_config = get_config(
+        database_name=database_name, 
+        collection_name=collection_name, 
+        model_name=model_name, 
+        embedding_model=embedding_model
+    )
     client = get_openai_client()
 
     init_milvus_db(memory_config)
 
-    m = Memory.from_config(memory_config)
+    memory = Memory.from_config(memory_config)
     logger.info("[Memory Instance Config]")
-    if hasattr(m, 'config'):
-        logger.info(m.config)
+    if hasattr(memory, 'config'):
+        logger.info(memory.config)
     else:
-        logger.info(vars(m))
+        logger.info(vars(memory))
 
     user_icon = "👤"
     bot_icon = "🤖"
@@ -174,6 +186,7 @@ def main():
     logger.info(f"{bot_icon} Welcome, {user_id}! Type 'exit' to end the conversation.")
 
     question_count = 1
+    history = []  # 記錄 human/ai 對話
     while True:
         try:
             question = input(f"\n[{question_count}] Human Question:\n").strip()
@@ -186,11 +199,12 @@ def main():
 
             if not question:
                 continue
-            
+
             question = question.encode('utf-8', 'ignore').decode('utf-8', 'ignore')
-            response = chat_with_memory(client, m, user_id, question)
+            response = chat_with_memory(client, memory, user_id, question, model_name)
+            history.append({"human": question, "ai": response})
             logger.info(f"[{question_count}] AI Response:\n{response}")
-            logger.info("=" * 50)
+            logger.info("\n" + "=" * 50)
             question_count += 1
         except KeyboardInterrupt:
             logger.info(f"\n{user_icon} Bye!")
