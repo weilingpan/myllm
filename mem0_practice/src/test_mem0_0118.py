@@ -30,6 +30,67 @@ def get_config(
         collection_name: str,
         model_name: str,
         embedding_model: str):
+    
+    # custom_extraction_prompt = None
+
+    # custom_extraction_prompt = """
+    # If it contains long-term useful information about the user's preferences, identity, or status, extract it.
+    # Here are some few shot examples:
+
+    # Input: Hi.
+    # Output: {{"facts" : []}}
+
+    # Input: The weather is nice today.
+    # Output: {{"facts" : []}}
+
+    # Input: My order #12345 hasn't arrived yet.
+    # Output: {{"facts" : ["Order #12345 not received"]}}
+
+    # Input: I'm John Doe, and I'd like to return the shoes I bought last week.
+    # Output: {{"facts" : ["Customer name: John Doe", "Wants to return shoes", "Purchase made last week"]}}
+
+    # Input: I ordered a red shirt, size medium, but received a blue one instead.
+    # Output: {{"facts" : ["Ordered red shirt, size medium", "Received blue shirt instead"]}}
+
+    # Return the facts and customer information in a json format as shown above.
+    # """
+
+    custom_extraction_prompt = """
+    If it contains long-term useful information about the user's preferences, identity, or status, extract it.
+    If not, output \"None\".
+    Only output the extracted facts, do not explain
+
+    Input: Hi.
+    Output: {{"facts" : []}}
+
+    Input: The weather is nice today.
+    Output: {{"facts" : []}}
+
+    Input: My order #12345 hasn't arrived yet.
+    Output: {{"facts" : ["Order #12345 not received"]}}
+
+    Input: I'm John Doe, and I'd like to return the shoes I bought last week.
+    Output: {{"facts" : ["Customer name: John Doe", "Wants to return shoes", "Purchase made last week"]}}
+
+    Input: I ordered a red shirt, size medium, but received a blue one instead.
+    Output: {{"facts" : ["Ordered red shirt, size medium", "Received blue shirt instead"]}}
+
+    Return the facts and customer information in a json format as shown above.
+    """
+
+    # custom_extraction_prompt = """
+    # Extract key facts from the conversation focusing on:
+    # 1. Personal preferences
+    # 2. Technical skills
+    # 3. Project requirements
+    # 4. Important dates and deadlines
+
+    # Conversation: {messages}
+    # """
+
+
+    custom_update_memory_prompt = None
+
     return {
         # https://github.com/mem0ai/mem0/blob/dba7f0458aeb50aa7078d36eaefa2405afbee620/mem0/configs/vector_stores/milvus.py#L22
         "vector_store": {
@@ -55,6 +116,8 @@ def get_config(
                 "model": embedding_model,
             }
         },
+        "custom_fact_extraction_prompt": custom_extraction_prompt,
+        "custom_update_memory_prompt": custom_update_memory_prompt,
         "version": "v1.1",
     }
 
@@ -101,11 +164,18 @@ def clean_up_milvus_db(config):
             logger.warning(f"Failed to clean up Milvus database: {e}")
 
 def add_memory(m, user_id: str, content: str):
+    logger.info(f"Try to add memory for user '{user_id}': {content}")
     res = m.add(
         messages=content,
         user_id=user_id,
         metadata={"category": "fact"},
     )
+    if res.get("results"):
+        logger.info(f"Memories operation: {len(res.get('results'))}")
+        for i, entry in enumerate(res.get("results")):
+            logger.info(f"- event: {entry['event']}")
+    else:
+        logger.warning("No memory was added.")
     return res
 
 
@@ -118,9 +188,9 @@ def get_memory(m, user_id: str):
 
 def search_memory(m, user_id: str, query: str, top_k: int = 5):
     memories = m.search(query=query, user_id=user_id)
-    logger.debug(f"Relevant memories for the query '{query}':")
+    logger.info(f"Relevant memories for the query '{query}':")
     for i, entry in enumerate(memories.get("results", []), start=1):
-        logger.debug(f"- {entry['memory']} (Score: {entry['score']})")
+        logger.info(f"- {entry['memory']} (Score: {entry['score']})")
     return memories
 
 
@@ -136,17 +206,19 @@ def chat_with_memory(
 
     existing_memory = memories.get("results", [])
     # logger.info(f"Existing memories count: {len(existing_memory)}")
-    if existing_memory:
+    if len(existing_memory) > 0:
+        logger.info("Searching for relevant memories...")
         relevant_memories = search_memory(m, user_id, text)
         if relevant_memories["results"]:
             memories = "\n".join(
                 f"- {entry['memory']}" for entry in relevant_memories["results"]
             )
-            system_prompt = f"You are a helpful AI. Answer the question based on query and memories.\nUser memories:\n{memories}"
+            system_prompt = (
+                "You are a helpful AI. Answer the question based on query and memories.\n"
+                f"User memories:\n{memories}\n"
+            )
 
-    logger.debug(f"System Prompt:\n{system_prompt}")
-    add_memory(m, user_id, text)
-
+    logger.info(f"System Prompt: {system_prompt}")
     response = client.chat.completions.create(
         model=model_name,
         messages=[
@@ -154,6 +226,8 @@ def chat_with_memory(
             {"role": "user", "content": text},
         ],
     )
+
+    add_memory(m, user_id, text)
     return response.choices[0].message.content
 
 
@@ -162,6 +236,12 @@ def main():
     collection_name = "test_mem0_collection"
     model_name = "gpt-5.2-2025-12-11"
     embedding_model = "text-embedding-3-large"
+
+    logger.info("Initializing Memory with Milvus backend...")
+    logger.info(f"Database Name: {database_name}")
+    logger.info(f"Collection Name: {collection_name}")
+    logger.info(f"LLM Model: {model_name}")
+    logger.info(f"Embedding Model: {embedding_model}\n")
 
     memory_config = get_config(
         database_name=database_name, 
@@ -207,10 +287,15 @@ def main():
             logger.info("\n" + "=" * 50)
             question_count += 1
         except KeyboardInterrupt:
-            logger.info(f"\n{user_icon} Bye!")
+            logger.info(f"\n{user_icon} KeyboardInterrupt detected. Cleaning up Milvus DB...")
+            clean_up_milvus_db(memory_config)
+            logger.info(f"{user_icon} Bye!")
             break
 
 
 if __name__ == "__main__":
     main()
 
+
+
+# reference: https://github.com/mem0ai/mem0/blob/dba7f0458aeb50aa7078d36eaefa2405afbee620/LLM.md
