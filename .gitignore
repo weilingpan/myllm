@@ -1,3 +1,7 @@
 env
 citation
 env.py
+db
+__pycache__
+volumes
+.env
