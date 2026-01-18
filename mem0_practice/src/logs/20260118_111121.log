@@ -1,0 +1,415 @@
+2026-01-18 11:11:21 INFO [poc_mem0.py] Running file: /app/poc_mem0.py
+2026-01-18 11:11:21 INFO [poc_mem0.py] Initializing Memory with Milvus backend...
+2026-01-18 11:11:21 INFO [poc_mem0.py] Database Name: test_mem0_db
+2026-01-18 11:11:21 INFO [poc_mem0.py] Collection Name: test_mem0_collection
+2026-01-18 11:11:21 INFO [poc_mem0.py] LLM Model: gpt-5.2-2025-12-11
+2026-01-18 11:11:21 INFO [poc_mem0.py] Embedding Model: text-embedding-3-large
+
+2026-01-18 11:11:21 INFO [poc_mem0.py] Checking database 'test_mem0_db' in Milvus at http://milvus-standalone:19530...
+2026-01-18 11:11:21 INFO [poc_mem0.py] Database 'test_mem0_db' already exists.
+2026-01-18 11:11:21 INFO [milvus.py] Collection test_mem0_collection already exists. Skipping creation.
+2026-01-18 11:11:21 INFO [milvus.py] Collection mem0migrations already exists. Skipping creation.
+2026-01-18 11:11:21 INFO [poc_mem0.py] [Memory Instance Config]
+2026-01-18 11:11:21 INFO [poc_mem0.py] vector_store=VectorStoreConfig(provider='milvus', config=MilvusDBConfig(url='http://milvus-standalone:19530', token='', collection_name='test_mem0_collection', embedding_model_dims=1536, metric_type='L2', db_name='test_mem0_db')) llm=LlmConfig(provider='openai', config={'model': 'gpt-5.2-2025-12-11'}) embedder=EmbedderConfig(provider='openai', config={'model': 'text-embedding-3-large'}) history_db_path='/root/.mem0/history.db' graph_store=GraphStoreConfig(provider='neo4j', config=None, llm=None, custom_prompt=None, threshold=0.7) reranker=None version='v1.1' custom_fact_extraction_prompt='\n    If it contains long-term useful information about the user\'s preferences, identity, or status, extract it.\n    If not, output "None".\n    Only output the extracted facts, do not explain\n\n    Input: Hi.\n    Output: {{"facts" : []}}\n\n    Input: The weather is nice today.\n    Output: {{"facts" : []}}\n\n    Input: My order #12345 hasn\'t arrived yet.\n    Output: {{"facts" : ["Order #12345 not received"]}}\n\n    Input: I\'m John Doe, and I\'d like to return the shoes I bought last week.\n    Output: {{"facts" : ["Customer name: John Doe", "Wants to return shoes", "Purchase made last week"]}}\n\n    Input: I ordered a red shirt, size medium, but received a blue one instead.\n    Output: {{"facts" : ["Ordered red shirt, size medium", "Received blue shirt instead"]}}\n\n    Return the facts and customer information in a json format as shown above.\n    ' custom_update_memory_prompt=None
+2026-01-18 11:11:23 INFO [poc_mem0.py] 🤖 Welcome, k! Type 'exit' to end the conversation.
+2026-01-18 11:11:23 INFO [poc_mem0.py] 
+==================================================
+2026-01-18 11:11:23 INFO [poc_mem0.py] [1] Human Question:
+我在學 Python，想找入門書
+2026-01-18 11:11:23 INFO [poc_mem0.py] Existing memories count: 0
+2026-01-18 11:11:23 INFO [poc_mem0.py] System Prompt: You are a helpful AI. Answer the question based on query.
+2026-01-18 11:11:39 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-18 11:11:39 INFO [poc_mem0.py] [1] AI Response:
+如果你在學 Python、想找「入門書」，我可以先給你幾本口碑很穩、路線不同的選擇，並告訴你適合哪種學習方式。你也可以回覆我你的目標（做網頁/資料分析/自動化/考試？）我再幫你精準挑。
+
+## 1) 最推薦的新手第一本（循序漸進、練習多）
+**《Python Crash Course（Python 程式設計入門）》**  
+- 優點：講解清楚、範例多，後面通常會帶小專案（例如遊戲/資料視覺化/網頁等版本略有差異）  
+- 適合：完全初學、想一步步扎實練基本功
+
+## 2) 想用「做中學」做小專案（輕鬆、有成就感）
+**《Automate the Boring Stuff with Python（用 Python 自動化無聊工作）》**  
+- 優點：很快能做出實用東西（整理檔案、處理 Excel、網頁抓資料等）  
+- 適合：想學了就能用在生活/工作、自動化需求的人
+
+## 3) 想把「觀念」打好、寫出更像工程師的程式
+**《Python Cookbook》**（偏進階，適合當第二本/工具書）  
+- 優點：很多實戰寫法與技巧  
+- 適合：已會基礎語法，開始想寫得更優雅、更有效率
+
+## 4) 免費線上資源（搭配書一起學很有效）
+- **官方教學 (Python Tutorial)**：最權威，但對完全新手可能稍硬  
+- **exercism / leetcode（基礎題）**：用題目練手感
+
+---
+
+## 我幫你更精準推薦：回覆我 3 個問題
+1. 你是完全零基礎，還是學過一點（例如變數、迴圈、函式）？  
+2. 你學 Python 的目標是：自動化/資料分析/網頁/學校課程/轉職？  
+3. 你偏好：繁體中文書、還是英文原文也可以？
+
+你回答後，我可以直接給你「一條學習路線」：第一本讀哪本、讀到哪裡、配哪些練習題，讓你更快上手。
+2026-01-18 11:11:39 INFO [poc_mem0.py] Try to add memory for user 'k': 我在學 Python，想找入門書
+2026-01-18 11:11:40 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-18 11:11:41 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-18 11:11:41 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-18 11:11:41 INFO [main.py] Total existing memories: 0
+2026-01-18 11:11:42 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-18 11:11:42 INFO [main.py] {'id': '0', 'text': 'User is learning Python', 'event': 'ADD'}
+2026-01-18 11:11:42 INFO [main.py] {'id': '1', 'text': 'User wants beginner Python book recommendations', 'event': 'ADD'}
+2026-01-18 11:11:42 INFO [poc_mem0.py] Memories operation: 2
+2026-01-18 11:11:42 INFO [poc_mem0.py] - event: ADD
+2026-01-18 11:11:42 INFO [poc_mem0.py] - event: ADD
+2026-01-18 11:11:45 INFO [poc_mem0.py] 
+==================================================
+2026-01-18 11:11:45 INFO [poc_mem0.py] [2] Human Question:
+我比較喜歡偏實作的書
+2026-01-18 11:11:45 INFO [poc_mem0.py] Existing memories count: 2
+2026-01-18 11:11:45 INFO [poc_mem0.py] Searching for relevant memories...
+2026-01-18 11:11:46 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-18 11:11:46 INFO [poc_mem0.py] Relevant memories for the query '我比較喜歡偏實作的書':
+2026-01-18 11:11:46 INFO [poc_mem0.py] - User wants beginner Python book recommendations (Score: 1.5408494472503662)
+2026-01-18 11:11:46 INFO [poc_mem0.py] - User is learning Python (Score: 2.0193610191345215)
+2026-01-18 11:11:46 INFO [poc_mem0.py] System Prompt: You are a helpful AI. Answer the question based on query and memories.
+User memories:
+- User wants beginner Python book recommendations
+- User is learning Python
+
+2026-01-18 11:12:00 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-18 11:12:00 INFO [poc_mem0.py] [2] AI Response:
+如果你偏好「實作導向」、邊做邊學的 Python 書，我會推薦這幾本（由入門到稍進階、都很重視練習/專案）：
+
+## 1)《Python Crash Course（Python 程式設計：從入門到實踐）》
+- 特色：前半打基礎、後半直接做專案（像是遊戲/資料視覺化/簡易 Web）。
+- 適合：想要「學一點就做一點」，而且希望有完整作品的人。
+
+## 2)《Automate the Boring Stuff with Python（用 Python 自動化無聊工作）》
+- 特色：超實用，重點放在自動化（檔案處理、Excel、PDF、爬網頁、寄信等）。
+- 適合：想很快做出能幫你省時間的腳本，成就感來得快。
+
+## 3)《Head First Python（深入淺出 Python）》
+- 特色：互動式、練習很多，讀起來比較不枯燥。
+- 適合：不想只看概念，想用例子一路跟著做的人。
+
+## 4)《Learn Python the Hard Way（笨方法學 Python）》
+- 特色：以「照做、打指令、做練習」為主，強迫動手。
+- 適合：你喜歡被規定每天練、用大量練習把基礎打牢。（風格比較硬派）
+
+---
+
+### 我想先問你兩個問題，幫你縮小到最適合的一本：
+1) 你想做哪一類實作？  
+A. 自動化/腳本（整理檔案、Excel、爬蟲）  
+B. 做作品/專案（遊戲、Web、資料視覺化）  
+C. 以大量練習打底（偏刷練習、寫小題）
+
+2) 你比較能接受英文書嗎？還是希望中文為主？
+
+你回我 A/B/C + 是否接受英文，我就幫你挑 1–2 本最合適的，順便給你一個「讀書＋實作」的學習路線。
+2026-01-18 11:12:00 INFO [poc_mem0.py] Try to add memory for user 'k': 我比較喜歡偏實作的書
+2026-01-18 11:12:01 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-18 11:12:01 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-18 11:12:01 INFO [main.py] Total existing memories: 2
+2026-01-18 11:12:03 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-18 11:12:03 INFO [main.py] {'id': '0', 'text': 'User wants beginner Python book recommendations', 'event': 'NONE'}
+2026-01-18 11:12:03 INFO [main.py] NOOP for Memory.
+2026-01-18 11:12:03 INFO [main.py] {'id': '1', 'text': 'User is learning Python', 'event': 'NONE'}
+2026-01-18 11:12:03 INFO [main.py] NOOP for Memory.
+2026-01-18 11:12:03 INFO [main.py] {'id': '2', 'text': 'User prefers practical, hands-on books', 'event': 'ADD'}
+2026-01-18 11:12:03 INFO [poc_mem0.py] Memories operation: 1
+2026-01-18 11:12:03 INFO [poc_mem0.py] - event: ADD
+2026-01-18 11:12:06 INFO [poc_mem0.py] 
+==================================================
+2026-01-18 11:12:06 INFO [poc_mem0.py] [3] Human Question:
+我不喜歡 Python 了，最近改學 Golang
+2026-01-18 11:12:06 INFO [poc_mem0.py] Existing memories count: 3
+2026-01-18 11:12:06 INFO [poc_mem0.py] Searching for relevant memories...
+2026-01-18 11:12:06 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-18 11:12:06 INFO [poc_mem0.py] Relevant memories for the query '我不喜歡 Python 了，最近改學 Golang':
+2026-01-18 11:12:06 INFO [poc_mem0.py] - User is learning Python (Score: 1.284690260887146)
+2026-01-18 11:12:06 INFO [poc_mem0.py] - User wants beginner Python book recommendations (Score: 1.5009726285934448)
+2026-01-18 11:12:06 INFO [poc_mem0.py] - User prefers practical, hands-on books (Score: 1.692033290863037)
+2026-01-18 11:12:06 INFO [poc_mem0.py] System Prompt: You are a helpful AI. Answer the question based on query and memories.
+User memories:
+- User is learning Python
+- User wants beginner Python book recommendations
+- User prefers practical, hands-on books
+
+2026-01-18 11:12:21 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-18 11:12:21 INFO [poc_mem0.py] [3] AI Response:
+了解。那我就改用「Golang、偏實作、適合初學」的方向來推薦（如果你也想我用繁中書名/台灣買得到的版本我也可以再精準一點）。
+
+## 實作取向 Go 入門書/資源推薦
+1) **《The Go Programming Language》 (Donovan & Kernighan)**  
+   經典系統性教材，練習題多，從語言核心到實務用法都講得很扎實。偏「正統」但不會太空泛。
+
+2) **《Go in Action》**  
+   很實務導向，會帶你用 Go 的方式寫出可工作的程式，對並發（goroutine、channel）也有不少著墨。
+
+3) **《Head First Go》**  
+   節奏比較輕鬆、以練習和範例帶你走，適合想快速「動手寫起來」的人。
+
+4) **Go 官方導覽（免費、超推薦）**  
+   - **A Tour of Go**：互動式語法與概念練習  
+   - **Effective Go**：教你寫出「像 Go」的程式（實作風格與慣例很重要）  
+   - **Go by Example**：用例子快速查語法與常見用法  
+   這三個搭配起來非常實用。
+
+## 若你想走「做專案」路線（更偏 hands-on）
+- 目標：寫一個小 API 服務（CRUD），用 `net/http` 或 `gin`，再加上資料庫（PostgreSQL/MySQL）和測試。  
+  我可以依你程度給你一個「兩週/四週」的練習路線與小專案規格。
+
+想幫你挑更精準的話，告訴我兩件事就好：  
+1) 你目前程度：完全新手 / 會寫基本語法 / 有其他語言經驗？  
+2) 你學 Go 是想做：後端 API、CLI 工具、爬蟲/自動化、還是系統/並發相關？
+2026-01-18 11:12:21 INFO [poc_mem0.py] Try to add memory for user 'k': 我不喜歡 Python 了，最近改學 Golang
+2026-01-18 11:12:23 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-18 11:12:23 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-18 11:12:23 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-18 11:12:23 INFO [main.py] Total existing memories: 3
+2026-01-18 11:12:28 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-18 11:12:28 INFO [main.py] {'id': '1', 'text': 'User wants beginner Python book recommendations', 'event': 'DELETE'}
+2026-01-18 11:12:28 INFO [main.py] Deleting memory with memory_id='a4d3d37a-2379-4ad0-9eeb-62a0fbf111a4'
+2026-01-18 11:12:28 INFO [main.py] {'id': '2', 'text': 'User prefers practical, hands-on books', 'event': 'NONE'}
+2026-01-18 11:12:28 INFO [main.py] NOOP for Memory.
+2026-01-18 11:12:28 INFO [main.py] {'id': '0', 'text': 'User recently switched to learning Golang', 'event': 'UPDATE', 'old_memory': 'User is learning Python'}
+2026-01-18 11:12:28 INFO [main.py] Updating memory with data='User recently switched to learning Golang'
+2026-01-18 11:12:28 INFO [main.py] Updating memory with ID memory_id='459641bb-39b0-49fb-8044-88d999d93b78' with data='User recently switched to learning Golang'
+2026-01-18 11:12:28 INFO [main.py] {'id': '3', 'text': 'User dislikes Python now', 'event': 'ADD'}
+2026-01-18 11:12:28 INFO [poc_mem0.py] Memories operation: 3
+2026-01-18 11:12:28 INFO [poc_mem0.py] - event: DELETE
+2026-01-18 11:12:28 INFO [poc_mem0.py] - event: UPDATE
+2026-01-18 11:12:28 INFO [poc_mem0.py] - event: ADD
+2026-01-18 11:12:31 INFO [poc_mem0.py] 
+==================================================
+2026-01-18 11:12:31 INFO [poc_mem0.py] [4] Human Question:
+我還是偏入門、不想太硬
+2026-01-18 11:12:31 INFO [poc_mem0.py] Existing memories count: 3
+2026-01-18 11:12:31 INFO [poc_mem0.py] Searching for relevant memories...
+2026-01-18 11:12:31 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-18 11:12:31 INFO [poc_mem0.py] Relevant memories for the query '我還是偏入門、不想太硬':
+2026-01-18 11:12:31 INFO [poc_mem0.py] - User prefers practical, hands-on books (Score: 1.497133493423462)
+2026-01-18 11:12:31 INFO [poc_mem0.py] - User recently switched to learning Golang (Score: 1.6028649806976318)
+2026-01-18 11:12:31 INFO [poc_mem0.py] - User dislikes Python now (Score: 1.6843241453170776)
+2026-01-18 11:12:31 INFO [poc_mem0.py] System Prompt: You are a helpful AI. Answer the question based on query and memories.
+User memories:
+- User prefers practical, hands-on books
+- User recently switched to learning Golang
+- User dislikes Python now
+
+2026-01-18 11:12:45 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-18 11:12:45 INFO [poc_mem0.py] [4] AI Response:
+如果你想「入門、不要太硬」，又剛轉去學 Go（而且不想碰 Python），我會建議走「小步快跑＋做東西」的路線。這裡給你幾本偏實作、相對不硬的選擇（由更入門到更實戰）：
+
+## 1) 最入門、最好上手
+**《Go 語言聖經 / The Go Programming Language》**  
+- 優點：講解清楚、例子多，觀念建立很扎實  
+- 使用方式：不用一次啃完，先挑你當下用得到的章節（例如：基本語法、函式、struct、介面、goroutine）
+
+> 如果你怕「聖經」聽起來太重：它其實是內容完整，不是寫得艱深那種。
+
+## 2) 偏「做中學」，不走學院派
+**《Go in Action》**（偏實務）  
+- 優點：用專案/情境帶你用 Go 的常見做法，閱讀壓力比一些純語言規格書小  
+- 適合：已經會基本語法，想開始寫出像樣的程式（並行、套件設計、工具鏈等）
+
+## 3) 想快速做 Web/REST（最不硬、最有成就感）
+**《Let’s Go》/《Let’s Go Further》**（如果你看英文 OK）  
+- 優點：非常「照做就做得出來」，適合想先有作品的人  
+- 產出：網站、REST API、資料庫、middleware、部署概念
+
+---
+
+# 我想先確認一下，幫你挑最適合的一本
+你比較想入門做哪種東西？
+1) **寫小工具/CLI**（命令列小程式、爬 log、批次處理）  
+2) **Web API/後端**（REST、登入、資料庫）  
+3) **並行/效能**（goroutine/channel，但你說不想太硬，我會放後面）
+
+你回 1/2/3，我就按你的方向給你「一本最適合的 + 兩週入門閱讀/實作安排」。
+2026-01-18 11:12:45 INFO [poc_mem0.py] Try to add memory for user 'k': 我還是偏入門、不想太硬
+2026-01-18 11:12:46 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-18 11:12:47 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-18 11:12:47 INFO [main.py] Total existing memories: 3
+2026-01-18 11:12:49 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-18 11:12:49 INFO [main.py] {'id': '0', 'text': 'User prefers practical, hands-on books', 'event': 'NONE'}
+2026-01-18 11:12:49 INFO [main.py] NOOP for Memory.
+2026-01-18 11:12:49 INFO [main.py] {'id': '1', 'text': 'User recently switched to learning Golang', 'event': 'NONE'}
+2026-01-18 11:12:49 INFO [main.py] NOOP for Memory.
+2026-01-18 11:12:49 INFO [main.py] {'id': '2', 'text': 'User dislikes Python now', 'event': 'NONE'}
+2026-01-18 11:12:49 INFO [main.py] NOOP for Memory.
+2026-01-18 11:12:49 INFO [main.py] {'id': '3', 'text': 'User prefers beginner-friendly content and does not want overly difficult material', 'event': 'ADD'}
+2026-01-18 11:12:49 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-18 11:12:49 INFO [poc_mem0.py] Memories operation: 1
+2026-01-18 11:12:49 INFO [poc_mem0.py] - event: ADD
+2026-01-18 11:12:52 INFO [poc_mem0.py] 
+==================================================
+2026-01-18 11:12:52 INFO [poc_mem0.py] [5] Human Question:
+幫我推薦一本「適合我」的書
+2026-01-18 11:12:52 INFO [poc_mem0.py] Existing memories count: 4
+2026-01-18 11:12:52 INFO [poc_mem0.py] Searching for relevant memories...
+2026-01-18 11:12:52 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-18 11:12:52 INFO [poc_mem0.py] Relevant memories for the query '幫我推薦一本「適合我」的書':
+2026-01-18 11:12:52 INFO [poc_mem0.py] - User prefers practical, hands-on books (Score: 1.3074254989624023)
+2026-01-18 11:12:52 INFO [poc_mem0.py] - User prefers beginner-friendly content and does not want overly difficult material (Score: 1.590296983718872)
+2026-01-18 11:12:52 INFO [poc_mem0.py] - User recently switched to learning Golang (Score: 1.8292551040649414)
+2026-01-18 11:12:52 INFO [poc_mem0.py] - User dislikes Python now (Score: 1.9159724712371826)
+2026-01-18 11:12:52 INFO [poc_mem0.py] System Prompt: You are a helpful AI. Answer the question based on query and memories.
+User memories:
+- User prefers practical, hands-on books
+- User prefers beginner-friendly content and does not want overly difficult material
+- User recently switched to learning Golang
+- User dislikes Python now
+
+2026-01-18 11:13:00 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-18 11:13:00 INFO [poc_mem0.py] [5] AI Response:
+你偏好「實作導向、入門友善」，而且你最近改學 Go、現在不想碰 Python；所以我會推薦這本最貼合你需求的：
+
+## 推薦：**《Head First Go》**（入門＋實作取向）
+**為什麼適合你：**
+- **很適合初學者**：用循序漸進的方式帶你建立 Go 的核心觀念，不會一上來就太硬。
+- **實作感強**：章節通常是「概念 → 小例子 → 動手做」，比較像做中學。
+- **專注 Go**：不會用 Python 當對照語言，避免你不想看到的內容。
+- **打底剛好**：把 Go 的基本語法、結構、函式、struct、介面、錯誤處理等講清楚，適合你剛轉 Go 的階段。
+
+如果你願意，我可以再精準一點幫你挑「最適合你版本」：  
+你目前 Go 大概在什麼程度（0 基礎／寫過小工具／已經會 goroutine）？你想做的方向是（Web API、CLI 工具、爬蟲/自動化、後端服務、系統工具）哪一種？
+2026-01-18 11:13:00 INFO [poc_mem0.py] Try to add memory for user 'k': 幫我推薦一本「適合我」的書
+2026-01-18 11:13:01 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-18 11:13:01 INFO [main.py] Total existing memories: 0
+2026-01-18 11:13:01 WARNING [poc_mem0.py] No memory was added.
+2026-01-18 11:13:04 INFO [poc_mem0.py] 
+=== Conversation History ===
+2026-01-18 11:13:04 INFO [poc_mem0.py] Round 1 Human: 我在學 Python，想找入門書
+2026-01-18 11:13:04 INFO [poc_mem0.py] Round 1 AI: 如果你在學 Python、想找「入門書」，我可以先給你幾本口碑很穩、路線不同的選擇，並告訴你適合哪種學習方式。你也可以回覆我你的目標（做網頁/資料分析/自動化/考試？）我再幫你精準挑。
+
+## 1) 最推薦的新手第一本（循序漸進、練習多）
+**《Python Crash Course（Python 程式設計入門）》**  
+- 優點：講解清楚、範例多，後面通常會帶小專案（例如遊戲/資料視覺化/網頁等版本略有差異）  
+- 適合：完全初學、想一步步扎實練基本功
+
+## 2) 想用「做中學」做小專案（輕鬆、有成就感）
+**《Automate the Boring Stuff with Python（用 Python 自動化無聊工作）》**  
+- 優點：很快能做出實用東西（整理檔案、處理 Excel、網頁抓資料等）  
+- 適合：想學了就能用在生活/工作、自動化需求的人
+
+## 3) 想把「觀念」打好、寫出更像工程師的程式
+**《Python Cookbook》**（偏進階，適合當第二本/工具書）  
+- 優點：很多實戰寫法與技巧  
+- 適合：已會基礎語法，開始想寫得更優雅、更有效率
+
+## 4) 免費線上資源（搭配書一起學很有效）
+- **官方教學 (Python Tutorial)**：最權威，但對完全新手可能稍硬  
+- **exercism / leetcode（基礎題）**：用題目練手感
+
+---
+
+## 我幫你更精準推薦：回覆我 3 個問題
+1. 你是完全零基礎，還是學過一點（例如變數、迴圈、函式）？  
+2. 你學 Python 的目標是：自動化/資料分析/網頁/學校課程/轉職？  
+3. 你偏好：繁體中文書、還是英文原文也可以？
+
+你回答後，我可以直接給你「一條學習路線」：第一本讀哪本、讀到哪裡、配哪些練習題，讓你更快上手。
+2026-01-18 11:13:04 INFO [poc_mem0.py] Round 2 Human: 我比較喜歡偏實作的書
+2026-01-18 11:13:04 INFO [poc_mem0.py] Round 2 AI: 如果你偏好「實作導向」、邊做邊學的 Python 書，我會推薦這幾本（由入門到稍進階、都很重視練習/專案）：
+
+## 1)《Python Crash Course（Python 程式設計：從入門到實踐）》
+- 特色：前半打基礎、後半直接做專案（像是遊戲/資料視覺化/簡易 Web）。
+- 適合：想要「學一點就做一點」，而且希望有完整作品的人。
+
+## 2)《Automate the Boring Stuff with Python（用 Python 自動化無聊工作）》
+- 特色：超實用，重點放在自動化（檔案處理、Excel、PDF、爬網頁、寄信等）。
+- 適合：想很快做出能幫你省時間的腳本，成就感來得快。
+
+## 3)《Head First Python（深入淺出 Python）》
+- 特色：互動式、練習很多，讀起來比較不枯燥。
+- 適合：不想只看概念，想用例子一路跟著做的人。
+
+## 4)《Learn Python the Hard Way（笨方法學 Python）》
+- 特色：以「照做、打指令、做練習」為主，強迫動手。
+- 適合：你喜歡被規定每天練、用大量練習把基礎打牢。（風格比較硬派）
+
+---
+
+### 我想先問你兩個問題，幫你縮小到最適合的一本：
+1) 你想做哪一類實作？  
+A. 自動化/腳本（整理檔案、Excel、爬蟲）  
+B. 做作品/專案（遊戲、Web、資料視覺化）  
+C. 以大量練習打底（偏刷練習、寫小題）
+
+2) 你比較能接受英文書嗎？還是希望中文為主？
+
+你回我 A/B/C + 是否接受英文，我就幫你挑 1–2 本最合適的，順便給你一個「讀書＋實作」的學習路線。
+2026-01-18 11:13:04 INFO [poc_mem0.py] Round 3 Human: 我不喜歡 Python 了，最近改學 Golang
+2026-01-18 11:13:04 INFO [poc_mem0.py] Round 3 AI: 了解。那我就改用「Golang、偏實作、適合初學」的方向來推薦（如果你也想我用繁中書名/台灣買得到的版本我也可以再精準一點）。
+
+## 實作取向 Go 入門書/資源推薦
+1) **《The Go Programming Language》 (Donovan & Kernighan)**  
+   經典系統性教材，練習題多，從語言核心到實務用法都講得很扎實。偏「正統」但不會太空泛。
+
+2) **《Go in Action》**  
+   很實務導向，會帶你用 Go 的方式寫出可工作的程式，對並發（goroutine、channel）也有不少著墨。
+
+3) **《Head First Go》**  
+   節奏比較輕鬆、以練習和範例帶你走，適合想快速「動手寫起來」的人。
+
+4) **Go 官方導覽（免費、超推薦）**  
+   - **A Tour of Go**：互動式語法與概念練習  
+   - **Effective Go**：教你寫出「像 Go」的程式（實作風格與慣例很重要）  
+   - **Go by Example**：用例子快速查語法與常見用法  
+   這三個搭配起來非常實用。
+
+## 若你想走「做專案」路線（更偏 hands-on）
+- 目標：寫一個小 API 服務（CRUD），用 `net/http` 或 `gin`，再加上資料庫（PostgreSQL/MySQL）和測試。  
+  我可以依你程度給你一個「兩週/四週」的練習路線與小專案規格。
+
+想幫你挑更精準的話，告訴我兩件事就好：  
+1) 你目前程度：完全新手 / 會寫基本語法 / 有其他語言經驗？  
+2) 你學 Go 是想做：後端 API、CLI 工具、爬蟲/自動化、還是系統/並發相關？
+2026-01-18 11:13:04 INFO [poc_mem0.py] Round 4 Human: 我還是偏入門、不想太硬
+2026-01-18 11:13:04 INFO [poc_mem0.py] Round 4 AI: 如果你想「入門、不要太硬」，又剛轉去學 Go（而且不想碰 Python），我會建議走「小步快跑＋做東西」的路線。這裡給你幾本偏實作、相對不硬的選擇（由更入門到更實戰）：
+
+## 1) 最入門、最好上手
+**《Go 語言聖經 / The Go Programming Language》**  
+- 優點：講解清楚、例子多，觀念建立很扎實  
+- 使用方式：不用一次啃完，先挑你當下用得到的章節（例如：基本語法、函式、struct、介面、goroutine）
+
+> 如果你怕「聖經」聽起來太重：它其實是內容完整，不是寫得艱深那種。
+
+## 2) 偏「做中學」，不走學院派
+**《Go in Action》**（偏實務）  
+- 優點：用專案/情境帶你用 Go 的常見做法，閱讀壓力比一些純語言規格書小  
+- 適合：已經會基本語法，想開始寫出像樣的程式（並行、套件設計、工具鏈等）
+
+## 3) 想快速做 Web/REST（最不硬、最有成就感）
+**《Let’s Go》/《Let’s Go Further》**（如果你看英文 OK）  
+- 優點：非常「照做就做得出來」，適合想先有作品的人  
+- 產出：網站、REST API、資料庫、middleware、部署概念
+
+---
+
+# 我想先確認一下，幫你挑最適合的一本
+你比較想入門做哪種東西？
+1) **寫小工具/CLI**（命令列小程式、爬 log、批次處理）  
+2) **Web API/後端**（REST、登入、資料庫）  
+3) **並行/效能**（goroutine/channel，但你說不想太硬，我會放後面）
+
+你回 1/2/3，我就按你的方向給你「一本最適合的 + 兩週入門閱讀/實作安排」。
+2026-01-18 11:13:04 INFO [poc_mem0.py] Round 5 Human: 幫我推薦一本「適合我」的書
+2026-01-18 11:13:04 INFO [poc_mem0.py] Round 5 AI: 你偏好「實作導向、入門友善」，而且你最近改學 Go、現在不想碰 Python；所以我會推薦這本最貼合你需求的：
+
+## 推薦：**《Head First Go》**（入門＋實作取向）
+**為什麼適合你：**
+- **很適合初學者**：用循序漸進的方式帶你建立 Go 的核心觀念，不會一上來就太硬。
+- **實作感強**：章節通常是「概念 → 小例子 → 動手做」，比較像做中學。
+- **專注 Go**：不會用 Python 當對照語言，避免你不想看到的內容。
+- **打底剛好**：把 Go 的基本語法、結構、函式、struct、介面、錯誤處理等講清楚，適合你剛轉 Go 的階段。
+
+如果你願意，我可以再精準一點幫你挑「最適合你版本」：  
+你目前 Go 大概在什麼程度（0 基礎／寫過小工具／已經會 goroutine）？你想做的方向是（Web API、CLI 工具、爬蟲/自動化、後端服務、系統工具）哪一種？
+2026-01-18 11:13:04 INFO [poc_mem0.py] Cleaning up Milvus DB...
+2026-01-18 11:13:04 INFO [poc_mem0.py] Cleaning up database 'test_mem0_db' in Milvus at http://milvus-standalone:19530...
+2026-01-18 11:13:04 INFO [poc_mem0.py] Dropping collection: mem0migrations
+2026-01-18 11:13:04 INFO [poc_mem0.py] Dropping collection: test_mem0_collection
+2026-01-18 11:13:04 INFO [poc_mem0.py] Database 'test_mem0_db' has been dropped.
+2026-01-18 11:13:04 INFO [poc_mem0.py] Milvus DB cleanup complete.
