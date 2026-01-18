@@ -212,7 +212,7 @@ def chat_with_memory(
         user_id: str,
         text: str,
         model_name: str):
-    system_prompt = f"You are a helpful AI. Answer the question based on query."
+    system_prompt = f"You are a helpful AI."
 
     memories = get_memory(m, user_id)
 
@@ -241,14 +241,39 @@ def chat_with_memory(
 
     return response.choices[0].message.content
 
+def chat_with_stm(
+        client, 
+        user_id: str, 
+        text: str, 
+        model_name: str, 
+        history: list,
+        stm: int = 2
+    ):
+    system_prompt = f"You are a helpful AI."
 
-def main():
+    history_text = "\n".join([
+        f"Human: {entry['human']}\nAI: {entry['ai']}" for entry in history[-stm:]
+    ])
+    if history_text:
+        system_prompt = f"You are a helpful AI.\nRecent conversation:\n{history_text}"
+
+    logger.info(f"System Prompt: {system_prompt}")
+    response = client.chat.completions.create(
+        model=model_name,
+        messages=[
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": text},
+        ],
+    )
+
+    return response.choices[0].message.content
+
+## llm + mem0
+def main_llm_mem0():
     database_name = "test_mem0_db"
     collection_name = "test_mem0_collection"
     model_name = "gpt-5.2-2025-12-11"
     embedding_model = "text-embedding-3-large"
-
-    stm = 2
 
     logger.info("Initializing Memory with Milvus backend...")
     logger.info(f"Database Name: {database_name}")
@@ -281,11 +306,12 @@ def main():
     question_count = 1
     history = []  # 記錄 human/ai 對話
     preset_questions = [
-        "我在學 Python，想找入門書",
-        "我比較喜歡偏實作的書",
-        "我不喜歡 Python 了，最近改學 Golang",
-        "我還是偏入門、不想太硬",
-        "幫我推薦一本「適合我」的書"
+        "我最喜歡的水果是蘋果",          # 關鍵
+        "我不太喜歡吃太甜的水果",        # 關鍵偏好
+        "你覺得水果每天吃好嗎？",        # 無關
+        "很多人早餐會吃水果，你怎麼看？", # 無關
+        "最近天氣變熱了",                # 干擾
+        "幫我推薦一種「適合我」的水果"
     ]
 
     for question in preset_questions:
@@ -309,8 +335,54 @@ def main():
     logger.info("Milvus DB cleanup complete.")
 
 
+## llm+stm2
+def main_llm_stm():
+    database_name = "test_mem0_db"
+    collection_name = "test_mem0_collection"
+    model_name = "gpt-5.2-2025-12-11"
+    embedding_model = "text-embedding-3-large"
+
+    logger.info("Initializing Memory with Milvus backend...")
+    logger.info(f"Database Name: {database_name}")
+    logger.info(f"Collection Name: {collection_name}")
+    logger.info(f"LLM Model: {model_name}")
+    logger.info(f"Embedding Model: {embedding_model}\n")
+
+    client = get_openai_client()
+
+    user_icon = "👤"
+    bot_icon = "🤖"
+    user_id = input(f"{user_icon} Please enter your name: ").strip() or "User"
+    logger.info(f"{bot_icon} Welcome, {user_id}! Type 'exit' to end the conversation.")
+
+    question_count = 1
+    history = []  # 記錄 human/ai 對話
+    preset_questions = [
+        "我最喜歡的水果是蘋果",          # 關鍵
+        "我不太喜歡吃太甜的水果",        # 關鍵偏好
+        "你覺得水果每天吃好嗎？",        # 無關
+        "很多人早餐會吃水果，你怎麼看？", # 無關
+        "最近天氣變熱了",                # 干擾
+        "幫我推薦一種「適合我」的水果"
+    ]
+
+    for question in preset_questions:
+        logger.info("\n" + "=" * 50)
+        logger.info(f"[{question_count}] Human Question:\n{question}")
+        question = question.encode('utf-8', 'ignore').decode('utf-8', 'ignore')
+        response = chat_with_stm(client, user_id, question, model_name, history)
+        history.append({"human": question, "ai": response})
+        logger.info(f"[{question_count}] AI Response:\n{response}")
+        question_count += 1
+
+    logger.info("\n=== Conversation History ===")
+    for i, entry in enumerate(history, 1):
+        logger.info(f"Round {i} Human: {entry['human']}")
+        logger.info(f"Round {i} AI: {entry['ai']}")
+
 if __name__ == "__main__":
-    main()
+    # main_llm_mem0()
+    main_llm_stm()
 
 
 

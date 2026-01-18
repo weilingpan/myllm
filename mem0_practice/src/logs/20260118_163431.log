@@ -1,0 +1,309 @@
+2026-01-18 16:34:31 INFO [poc_mem0.py] Running file: /app/poc_mem0.py
+2026-01-18 16:34:31 INFO [poc_mem0.py] Initializing Memory with Milvus backend...
+2026-01-18 16:34:31 INFO [poc_mem0.py] Database Name: test_mem0_db
+2026-01-18 16:34:31 INFO [poc_mem0.py] Collection Name: test_mem0_collection
+2026-01-18 16:34:31 INFO [poc_mem0.py] LLM Model: gpt-5.2-2025-12-11
+2026-01-18 16:34:31 INFO [poc_mem0.py] Embedding Model: text-embedding-3-large
+
+2026-01-18 16:34:31 INFO [poc_mem0.py] Checking database 'test_mem0_db' in Milvus at http://milvus-standalone:19530...
+2026-01-18 16:34:31 INFO [poc_mem0.py] Creating database: test_mem0_db
+2026-01-18 16:34:38 INFO [poc_mem0.py] [Memory Instance Config]
+2026-01-18 16:34:38 INFO [poc_mem0.py] vector_store=VectorStoreConfig(provider='milvus', config=MilvusDBConfig(url='http://milvus-standalone:19530', token='', collection_name='test_mem0_collection', embedding_model_dims=1536, metric_type='L2', db_name='test_mem0_db')) llm=LlmConfig(provider='openai', config={'model': 'gpt-5.2-2025-12-11'}) embedder=EmbedderConfig(provider='openai', config={'model': 'text-embedding-3-large'}) history_db_path='/root/.mem0/history.db' graph_store=GraphStoreConfig(provider='neo4j', config=None, llm=None, custom_prompt=None, threshold=0.7) reranker=None version='v1.1' custom_fact_extraction_prompt='\n    If it contains long-term useful information about the user\'s preferences, identity, or status, extract it.\n    If not, output "None".\n    Only output the extracted facts, do not explain\n\n    Input: Hi.\n    Output: {{"facts" : []}}\n\n    Input: The weather is nice today.\n    Output: {{"facts" : []}}\n\n    Input: My order #12345 hasn\'t arrived yet.\n    Output: {{"facts" : ["Order #12345 not received"]}}\n\n    Input: I\'m John Doe, and I\'d like to return the shoes I bought last week.\n    Output: {{"facts" : ["Customer name: John Doe", "Wants to return shoes", "Purchase made last week"]}}\n\n    Input: I ordered a red shirt, size medium, but received a blue one instead.\n    Output: {{"facts" : ["Ordered red shirt, size medium", "Received blue shirt instead"]}}\n\n    Return the facts and customer information in a json format as shown above.\n    ' custom_update_memory_prompt=None
+2026-01-18 16:34:43 INFO [poc_mem0.py] 🤖 Welcome, regina! Type 'exit' to end the conversation.
+2026-01-18 16:34:43 INFO [poc_mem0.py] 
+==================================================
+2026-01-18 16:34:43 INFO [poc_mem0.py] [1] Human Question:
+我最喜歡的水果是蘋果
+2026-01-18 16:34:43 INFO [poc_mem0.py] Existing memories count: 0
+2026-01-18 16:34:43 INFO [poc_mem0.py] System Prompt: You are a helpful AI.
+2026-01-18 16:34:45 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-18 16:34:45 INFO [poc_mem0.py] [1] AI Response:
+了解，你最喜歡的水果是蘋果。  
+你喜歡蘋果的哪一種口感或品種（例如脆的、甜的、偏酸的；富士、青蘋果、蜜蘋果等）？
+2026-01-18 16:34:45 INFO [poc_mem0.py] Try to add memory for user 'regina': 我最喜歡的水果是蘋果
+2026-01-18 16:34:46 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-18 16:34:47 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-18 16:34:47 INFO [main.py] Total existing memories: 0
+2026-01-18 16:34:48 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-18 16:34:48 INFO [main.py] {'id': '0', 'text': "User's favorite fruit is apples", 'event': 'ADD'}
+2026-01-18 16:34:48 INFO [poc_mem0.py] Memories operation: 1
+2026-01-18 16:34:48 INFO [poc_mem0.py] - event: ADD
+2026-01-18 16:34:51 INFO [poc_mem0.py] 
+==================================================
+2026-01-18 16:34:51 INFO [poc_mem0.py] [2] Human Question:
+我不太喜歡吃太甜的水果
+2026-01-18 16:34:51 INFO [poc_mem0.py] Existing memories count: 1
+2026-01-18 16:34:51 INFO [poc_mem0.py] Searching for relevant memories...
+2026-01-18 16:34:51 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-18 16:34:51 INFO [poc_mem0.py] Relevant memories for the query '我不太喜歡吃太甜的水果':
+2026-01-18 16:34:51 INFO [poc_mem0.py] - User's favorite fruit is apples (Score: 1.2146632671356201)
+2026-01-18 16:34:51 INFO [poc_mem0.py] System Prompt: You are a helpful AI. Answer the question based on query and memories.
+User memories:
+- User's favorite fruit is apples
+
+2026-01-18 16:35:01 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-18 16:35:01 INFO [poc_mem0.py] [2] AI Response:
+如果你不太喜歡太甜的水果，可以優先選擇「酸甜、清爽、含糖相對低」的種類。你平常喜歡的蘋果也很適合，建議挑偏脆、偏酸的品種。
+
+**比較不甜、口感清爽的水果選擇**
+- **莓果類**：草莓、藍莓、覆盆子（通常不會甜到膩，酸香明顯）
+- **柑橘類**：葡萄柚、柳橙、橘子（想更不甜可選葡萄柚或偏酸的品種）
+- **奇異果**：尤其是綠奇異果通常比黃金奇異果更酸、更不甜
+- **番石榴/芭樂**：清脆、甜度多半不高（可挑硬一點的更不甜）
+- **西瓜**：整體甜感通常比芒果、荔枝那類低，但也看品種與成熟度
+
+**挑水果不那麼甜的小技巧**
+- 選「**稍微偏生/較硬**」的通常甜度更低（例如蘋果、芭樂、梨）
+- 同一種水果中，**顏色更淡或香氣較淡**的往往沒那麼甜
+- 果乾、罐頭通常更甜（或加糖），想避免甜就少選
+
+你平常是覺得哪些水果「甜到受不了」？我可以依你不喜歡的清單，幫你縮小到最合口味的幾種。
+2026-01-18 16:35:01 INFO [poc_mem0.py] Try to add memory for user 'regina': 我不太喜歡吃太甜的水果
+2026-01-18 16:35:02 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-18 16:35:02 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-18 16:35:02 INFO [main.py] Total existing memories: 1
+2026-01-18 16:35:03 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-18 16:35:03 INFO [main.py] {'id': '0', 'text': "User's favorite fruit is apples", 'event': 'NONE'}
+2026-01-18 16:35:03 INFO [main.py] NOOP for Memory.
+2026-01-18 16:35:03 INFO [main.py] {'id': '1', 'text': 'User does not like overly sweet fruits', 'event': 'ADD'}
+2026-01-18 16:35:03 INFO [poc_mem0.py] Memories operation: 1
+2026-01-18 16:35:03 INFO [poc_mem0.py] - event: ADD
+2026-01-18 16:35:06 INFO [poc_mem0.py] 
+==================================================
+2026-01-18 16:35:06 INFO [poc_mem0.py] [3] Human Question:
+你覺得水果每天吃好嗎？
+2026-01-18 16:35:06 INFO [poc_mem0.py] Existing memories count: 2
+2026-01-18 16:35:06 INFO [poc_mem0.py] Searching for relevant memories...
+2026-01-18 16:35:07 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-18 16:35:07 INFO [poc_mem0.py] Relevant memories for the query '你覺得水果每天吃好嗎？':
+2026-01-18 16:35:07 INFO [poc_mem0.py] - User's favorite fruit is apples (Score: 1.297516107559204)
+2026-01-18 16:35:07 INFO [poc_mem0.py] - User does not like overly sweet fruits (Score: 1.3023242950439453)
+2026-01-18 16:35:07 INFO [poc_mem0.py] System Prompt: You are a helpful AI. Answer the question based on query and memories.
+User memories:
+- User's favorite fruit is apples
+- User does not like overly sweet fruits
+
+2026-01-18 16:35:17 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-18 16:35:17 INFO [poc_mem0.py] [3] AI Response:
+每天吃水果通常是好的，但關鍵在「份量、種類、時間」以及你本身的狀況。
+
+- **好處**：水果提供膳食纖維、維生素、鉀與各種植化素，有助於腸道、心血管與整體代謝健康。  
+- **需要注意**：水果也含天然糖分（果糖），如果吃太多、挑到特別甜的品種，或用果汁取代整顆水果，反而可能讓糖分攝取偏高、飽足感不足。
+
+### 建議怎麼吃比較好
+1. **優先吃整顆水果**（比果汁、果乾好）：纖維多、比較不會一下子吃過量。  
+2. **控制份量**：一般成人一天大約 **2 份水果**常見（視體型、活動量、是否在控糖/減脂而調整）。  
+3. **選不那麼甜的種類**：像你偏好蘋果、也不愛太甜的水果，可以多選  
+   - **蘋果、奇異果、莓果、柚子/葡萄柚、芭樂、番茄**（番茄算水果/蔬果都可）  
+   相對更清爽、纖維也不錯。  
+4. **吃的時間**：大多時間都可以；若想更穩定血糖與更有飽足感，**搭配優格、堅果或正餐後當點心**通常比空腹大量吃更舒服。  
+5. **特殊狀況**：若你有糖尿病、脂肪肝、正在減重或腸胃容易脹氣，水果種類與份量更需要客製調整。
+
+如果你願意說一下：你的年齡/活動量、是否在減重或有控糖需求、平常一天大概吃多少水果（或會喝果汁嗎）？我可以幫你抓更適合你的每天份量與清單。
+2026-01-18 16:35:17 INFO [poc_mem0.py] Try to add memory for user 'regina': 你覺得水果每天吃好嗎？
+2026-01-18 16:35:18 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-18 16:35:18 INFO [main.py] Total existing memories: 0
+2026-01-18 16:35:18 WARNING [poc_mem0.py] No memory was added.
+2026-01-18 16:35:21 INFO [poc_mem0.py] 
+==================================================
+2026-01-18 16:35:21 INFO [poc_mem0.py] [4] Human Question:
+很多人早餐會吃水果，你怎麼看？
+2026-01-18 16:35:21 INFO [poc_mem0.py] Existing memories count: 2
+2026-01-18 16:35:21 INFO [poc_mem0.py] Searching for relevant memories...
+2026-01-18 16:35:21 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-18 16:35:22 INFO [poc_mem0.py] Relevant memories for the query '很多人早餐會吃水果，你怎麼看？':
+2026-01-18 16:35:22 INFO [poc_mem0.py] - User does not like overly sweet fruits (Score: 1.316298246383667)
+2026-01-18 16:35:22 INFO [poc_mem0.py] - User's favorite fruit is apples (Score: 1.326310396194458)
+2026-01-18 16:35:22 INFO [poc_mem0.py] System Prompt: You are a helpful AI. Answer the question based on query and memories.
+User memories:
+- User does not like overly sweet fruits
+- User's favorite fruit is apples
+
+2026-01-18 16:35:32 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-18 16:35:32 INFO [poc_mem0.py] [4] AI Response:
+早餐吃水果這件事本身沒問題，但「怎麼吃、吃多少、搭配什麼」很關鍵；把水果當成早餐的一部分通常更理想，而不是只靠水果就結束一餐。
+
+**我怎麼看：**
+- **優點**：水果有水分、纖維、維生素與植化素，早上吃能幫助補水、促進腸道蠕動，也方便快速。
+- **可能的問題**：如果早餐**只吃水果**，蛋白質和脂肪不足，容易很快餓、血糖起伏較大；有些人還會覺得胃酸不適。
+
+**更好的吃法（實用建議）：**
+1. **水果 + 蛋白質**：例如蘋果 + 優格/豆漿/雞蛋/起司（想清爽就無糖優格或豆漿）。
+2. **水果 + 全穀**：例如燕麥 + 蘋果丁 + 堅果；或全麥吐司配花生醬再加水果。
+3. **控制份量**：一般一餐水果抓**1 份**即可（約一個中等大小蘋果/一碗切塊水果），避免一早就吃到過多糖分。
+4. **不愛太甜的選擇**：像你喜歡的**蘋果**就很適合；也可選奇異果、莓果、葡萄柚等相對不甜、纖維較好的水果。
+
+**什麼情況要更注意：**
+- 容易胃食道逆流/胃敏感：避免空腹大量吃酸度高的水果，改成餐後或搭配其他食物。
+- 血糖控制需求：避免果汁、果乾；優先整顆水果並搭配蛋白質/堅果。
+
+如果你告訴我你通常幾點吃早餐、吃完多久會餓、以及你偏好中式或西式，我可以幫你用「蘋果為主、不要太甜」設計幾套更合適的早餐搭配。
+2026-01-18 16:35:32 INFO [poc_mem0.py] Try to add memory for user 'regina': 很多人早餐會吃水果，你怎麼看？
+2026-01-18 16:35:33 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-18 16:35:33 INFO [main.py] Total existing memories: 0
+2026-01-18 16:35:33 WARNING [poc_mem0.py] No memory was added.
+2026-01-18 16:35:36 INFO [poc_mem0.py] 
+==================================================
+2026-01-18 16:35:36 INFO [poc_mem0.py] [5] Human Question:
+最近天氣變熱了
+2026-01-18 16:35:36 INFO [poc_mem0.py] Existing memories count: 2
+2026-01-18 16:35:36 INFO [poc_mem0.py] Searching for relevant memories...
+2026-01-18 16:35:36 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-18 16:35:36 INFO [poc_mem0.py] Relevant memories for the query '最近天氣變熱了':
+2026-01-18 16:35:36 INFO [poc_mem0.py] - User does not like overly sweet fruits (Score: 1.8537826538085938)
+2026-01-18 16:35:36 INFO [poc_mem0.py] - User's favorite fruit is apples (Score: 1.9016976356506348)
+2026-01-18 16:35:36 INFO [poc_mem0.py] System Prompt: You are a helpful AI. Answer the question based on query and memories.
+User memories:
+- User does not like overly sweet fruits
+- User's favorite fruit is apples
+
+2026-01-18 16:35:47 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-18 16:35:47 INFO [poc_mem0.py] [5] AI Response:
+最近變熱的時候，可以從幾個方向調整一下（也順便挑一些不會太甜、你可能會喜歡的水果）：
+
+1) 補水與電解質  
+- 白開水分次喝，不要等到很渴才喝。  
+- 若流汗多：可以補一點電解質（無糖電解質飲、淡鹽水、或喝湯），避免只喝大量白水反而覺得更累。
+
+2) 飲食清爽一點  
+- 多選清淡、含水量高的食物：小黃瓜、番茄、冬瓜湯、豆腐、涼拌青菜。  
+- 減少油炸、重鹹、酒精，這些都更容易讓人覺得燥熱口渴。
+
+3) 不太甜又適合天熱的水果選擇（你也喜歡蘋果）  
+- 蘋果：冰鎮後切片，或做成蘋果薄片配無糖優格。  
+- 葡萄柚／柚子：偏酸苦、甜度較低。  
+- 奇異果：酸甜但不會膩。  
+- 草莓（當季才有）：通常不會過甜。  
+- 番茄（算蔬果）：清爽不甜，做沙拉很適合。
+
+4) 降溫小技巧  
+- 盡量避開正中午外出；室內用電扇搭配通風比只吹冷氣更省電。  
+- 洗溫偏涼的澡、用濕毛巾擦脖子和手腕也很快降溫。  
+- 睡前把房間先降溫再關小風量，會比較好睡。
+
+你所在的城市最近大概到幾度、是乾熱還是悶熱？我可以再幫你更精準地調整建議（例如運動、通勤或飲食）。
+2026-01-18 16:35:47 INFO [poc_mem0.py] Try to add memory for user 'regina': 最近天氣變熱了
+2026-01-18 16:35:48 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-18 16:35:48 INFO [main.py] Total existing memories: 0
+2026-01-18 16:35:48 WARNING [poc_mem0.py] No memory was added.
+2026-01-18 16:35:51 INFO [poc_mem0.py] 
+==================================================
+2026-01-18 16:35:51 INFO [poc_mem0.py] [6] Human Question:
+幫我推薦一種「適合我」的水果
+2026-01-18 16:35:51 INFO [poc_mem0.py] Existing memories count: 2
+2026-01-18 16:35:51 INFO [poc_mem0.py] Searching for relevant memories...
+2026-01-18 16:35:52 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-18 16:35:52 INFO [poc_mem0.py] Relevant memories for the query '幫我推薦一種「適合我」的水果':
+2026-01-18 16:35:52 INFO [poc_mem0.py] - User does not like overly sweet fruits (Score: 1.0918103456497192)
+2026-01-18 16:35:52 INFO [poc_mem0.py] - User's favorite fruit is apples (Score: 1.1141126155853271)
+2026-01-18 16:35:52 INFO [poc_mem0.py] System Prompt: You are a helpful AI. Answer the question based on query and memories.
+User memories:
+- User does not like overly sweet fruits
+- User's favorite fruit is apples
+
+2026-01-18 16:35:56 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-18 16:35:56 INFO [poc_mem0.py] [6] AI Response:
+如果要推薦一種「適合你」的水果，我會選 **青蘋果（如 Granny Smith）**。
+
+- **不會太甜**：酸甜偏清爽，符合你不喜歡過甜水果的偏好。  
+- **你本來就喜歡蘋果**：同類型更容易穩穩命中。  
+- **口感脆、用途多**：直接吃、切片配優格/起司、做沙拉都很搭。  
+
+如果你想要我再精準一點：你偏好 **更酸** 還是 **酸甜平衡**？以及你更在意 **脆度** 還是 **香氣**？我可以再給 2–3 個更貼近的品種。
+2026-01-18 16:35:56 INFO [poc_mem0.py] Try to add memory for user 'regina': 幫我推薦一種「適合我」的水果
+2026-01-18 16:35:56 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-18 16:35:56 INFO [main.py] Total existing memories: 0
+2026-01-18 16:35:56 WARNING [poc_mem0.py] No memory was added.
+2026-01-18 16:35:59 INFO [poc_mem0.py] 
+=== Conversation History ===
+2026-01-18 16:35:59 INFO [poc_mem0.py] Round 1 Human: 我最喜歡的水果是蘋果
+2026-01-18 16:35:59 INFO [poc_mem0.py] Round 1 AI: 了解，你最喜歡的水果是蘋果。  
+你喜歡蘋果的哪一種口感或品種（例如脆的、甜的、偏酸的；富士、青蘋果、蜜蘋果等）？
+2026-01-18 16:35:59 INFO [poc_mem0.py] Round 2 Human: 我不太喜歡吃太甜的水果
+2026-01-18 16:35:59 INFO [poc_mem0.py] Round 2 AI: 如果你不太喜歡太甜的水果，可以優先選擇「酸甜、清爽、含糖相對低」的種類。你平常喜歡的蘋果也很適合，建議挑偏脆、偏酸的品種。
+
+**比較不甜、口感清爽的水果選擇**
+- **莓果類**：草莓、藍莓、覆盆子（通常不會甜到膩，酸香明顯）
+- **柑橘類**：葡萄柚、柳橙、橘子（想更不甜可選葡萄柚或偏酸的品種）
+- **奇異果**：尤其是綠奇異果通常比黃金奇異果更酸、更不甜
+- **番石榴/芭樂**：清脆、甜度多半不高（可挑硬一點的更不甜）
+- **西瓜**：整體甜感通常比芒果、荔枝那類低，但也看品種與成熟度
+
+**挑水果不那麼甜的小技巧**
+- 選「**稍微偏生/較硬**」的通常甜度更低（例如蘋果、芭樂、梨）
+- 同一種水果中，**顏色更淡或香氣較淡**的往往沒那麼甜
+- 果乾、罐頭通常更甜（或加糖），想避免甜就少選
+
+你平常是覺得哪些水果「甜到受不了」？我可以依你不喜歡的清單，幫你縮小到最合口味的幾種。
+2026-01-18 16:35:59 INFO [poc_mem0.py] Round 3 Human: 你覺得水果每天吃好嗎？
+2026-01-18 16:35:59 INFO [poc_mem0.py] Round 3 AI: 每天吃水果通常是好的，但關鍵在「份量、種類、時間」以及你本身的狀況。
+
+- **好處**：水果提供膳食纖維、維生素、鉀與各種植化素，有助於腸道、心血管與整體代謝健康。  
+- **需要注意**：水果也含天然糖分（果糖），如果吃太多、挑到特別甜的品種，或用果汁取代整顆水果，反而可能讓糖分攝取偏高、飽足感不足。
+
+### 建議怎麼吃比較好
+1. **優先吃整顆水果**（比果汁、果乾好）：纖維多、比較不會一下子吃過量。  
+2. **控制份量**：一般成人一天大約 **2 份水果**常見（視體型、活動量、是否在控糖/減脂而調整）。  
+3. **選不那麼甜的種類**：像你偏好蘋果、也不愛太甜的水果，可以多選  
+   - **蘋果、奇異果、莓果、柚子/葡萄柚、芭樂、番茄**（番茄算水果/蔬果都可）  
+   相對更清爽、纖維也不錯。  
+4. **吃的時間**：大多時間都可以；若想更穩定血糖與更有飽足感，**搭配優格、堅果或正餐後當點心**通常比空腹大量吃更舒服。  
+5. **特殊狀況**：若你有糖尿病、脂肪肝、正在減重或腸胃容易脹氣，水果種類與份量更需要客製調整。
+
+如果你願意說一下：你的年齡/活動量、是否在減重或有控糖需求、平常一天大概吃多少水果（或會喝果汁嗎）？我可以幫你抓更適合你的每天份量與清單。
+2026-01-18 16:35:59 INFO [poc_mem0.py] Round 4 Human: 很多人早餐會吃水果，你怎麼看？
+2026-01-18 16:35:59 INFO [poc_mem0.py] Round 4 AI: 早餐吃水果這件事本身沒問題，但「怎麼吃、吃多少、搭配什麼」很關鍵；把水果當成早餐的一部分通常更理想，而不是只靠水果就結束一餐。
+
+**我怎麼看：**
+- **優點**：水果有水分、纖維、維生素與植化素，早上吃能幫助補水、促進腸道蠕動，也方便快速。
+- **可能的問題**：如果早餐**只吃水果**，蛋白質和脂肪不足，容易很快餓、血糖起伏較大；有些人還會覺得胃酸不適。
+
+**更好的吃法（實用建議）：**
+1. **水果 + 蛋白質**：例如蘋果 + 優格/豆漿/雞蛋/起司（想清爽就無糖優格或豆漿）。
+2. **水果 + 全穀**：例如燕麥 + 蘋果丁 + 堅果；或全麥吐司配花生醬再加水果。
+3. **控制份量**：一般一餐水果抓**1 份**即可（約一個中等大小蘋果/一碗切塊水果），避免一早就吃到過多糖分。
+4. **不愛太甜的選擇**：像你喜歡的**蘋果**就很適合；也可選奇異果、莓果、葡萄柚等相對不甜、纖維較好的水果。
+
+**什麼情況要更注意：**
+- 容易胃食道逆流/胃敏感：避免空腹大量吃酸度高的水果，改成餐後或搭配其他食物。
+- 血糖控制需求：避免果汁、果乾；優先整顆水果並搭配蛋白質/堅果。
+
+如果你告訴我你通常幾點吃早餐、吃完多久會餓、以及你偏好中式或西式，我可以幫你用「蘋果為主、不要太甜」設計幾套更合適的早餐搭配。
+2026-01-18 16:35:59 INFO [poc_mem0.py] Round 5 Human: 最近天氣變熱了
+2026-01-18 16:35:59 INFO [poc_mem0.py] Round 5 AI: 最近變熱的時候，可以從幾個方向調整一下（也順便挑一些不會太甜、你可能會喜歡的水果）：
+
+1) 補水與電解質  
+- 白開水分次喝，不要等到很渴才喝。  
+- 若流汗多：可以補一點電解質（無糖電解質飲、淡鹽水、或喝湯），避免只喝大量白水反而覺得更累。
+
+2) 飲食清爽一點  
+- 多選清淡、含水量高的食物：小黃瓜、番茄、冬瓜湯、豆腐、涼拌青菜。  
+- 減少油炸、重鹹、酒精，這些都更容易讓人覺得燥熱口渴。
+
+3) 不太甜又適合天熱的水果選擇（你也喜歡蘋果）  
+- 蘋果：冰鎮後切片，或做成蘋果薄片配無糖優格。  
+- 葡萄柚／柚子：偏酸苦、甜度較低。  
+- 奇異果：酸甜但不會膩。  
+- 草莓（當季才有）：通常不會過甜。  
+- 番茄（算蔬果）：清爽不甜，做沙拉很適合。
+
+4) 降溫小技巧  
+- 盡量避開正中午外出；室內用電扇搭配通風比只吹冷氣更省電。  
+- 洗溫偏涼的澡、用濕毛巾擦脖子和手腕也很快降溫。  
+- 睡前把房間先降溫再關小風量，會比較好睡。
+
+你所在的城市最近大概到幾度、是乾熱還是悶熱？我可以再幫你更精準地調整建議（例如運動、通勤或飲食）。
+2026-01-18 16:35:59 INFO [poc_mem0.py] Round 6 Human: 幫我推薦一種「適合我」的水果
+2026-01-18 16:35:59 INFO [poc_mem0.py] Round 6 AI: 如果要推薦一種「適合你」的水果，我會選 **青蘋果（如 Granny Smith）**。
+
+- **不會太甜**：酸甜偏清爽，符合你不喜歡過甜水果的偏好。  
+- **你本來就喜歡蘋果**：同類型更容易穩穩命中。  
+- **口感脆、用途多**：直接吃、切片配優格/起司、做沙拉都很搭。  
+
+如果你想要我再精準一點：你偏好 **更酸** 還是 **酸甜平衡**？以及你更在意 **脆度** 還是 **香氣**？我可以再給 2–3 個更貼近的品種。
+2026-01-18 16:35:59 INFO [poc_mem0.py] Cleaning up Milvus DB...
+2026-01-18 16:35:59 INFO [poc_mem0.py] Cleaning up database 'test_mem0_db' in Milvus at http://milvus-standalone:19530...
+2026-01-18 16:35:59 INFO [poc_mem0.py] Dropping collection: mem0migrations
+2026-01-18 16:35:59 INFO [poc_mem0.py] Dropping collection: test_mem0_collection
+2026-01-18 16:35:59 INFO [poc_mem0.py] Database 'test_mem0_db' has been dropped.
+2026-01-18 16:35:59 INFO [poc_mem0.py] Milvus DB cleanup complete.
