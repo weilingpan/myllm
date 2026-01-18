@@ -98,21 +98,21 @@ def search_memory(m, user_id: str, query: str, top_k: int = 5):
 
 
 def chat_with_memory(client, m, user_id: str, text: str, model_name="gpt-4o"):
+    system_prompt = f"You are a helpful AI. Answer the question based on query."
+
     memories = get_memory(m, user_id)
 
     existed_memory = memories.get("results", [])
     if existed_memory:
         relevant_memories = search_memory(m, user_id, text)
+        if relevant_memories["results"]:
+            memories = "\n".join(
+                f"- {entry['memory']}" for entry in relevant_memories["results"]
+            )
+            system_prompt = f"You are a helpful AI. Answer the question based on query and memories.\nUser memories:\n{memories}"
 
-    add_memory(m, user_id, text)
-
-    system_prompt = f"You are a helpful AI. Answer the question based on query."
-    if relevant_memories["results"]:
-        memories = "\n".join(
-            f"- {entry['memory']}" for entry in relevant_memories["results"]
-        )
-        system_prompt = f"You are a helpful AI. Answer the question based on query and memories.\nUser memories:\n{memories}"
     print(f"\nSystem Prompt:\n{system_prompt}")
+    add_memory(m, user_id, text)
 
     response = client.chat.completions.create(
         model=model_name,
