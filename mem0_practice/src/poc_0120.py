@@ -288,6 +288,7 @@ def chat_with_stm(
 
 ## llm + mem0
 def main_llm_mem0():
+    logger.info(f"\n{'='*20} LLM + Mem0 {'='*20}\n")
     base_url = os.environ.get("LLAMA_BASE_URL")
     database_name = "test_mem0_db"
     collection_name = "test_mem0_collection"
@@ -356,6 +357,7 @@ def main_llm_mem0():
 
 ## llm+stm2
 def main_llm_stm():
+    logger.info(f"\n{'='*20} LLM + STM {'='*20}\n")
     base_url = os.environ.get("LLAMA_BASE_URL")
     database_name = "test_mem0_db"
     collection_name = "test_mem0_collection"
