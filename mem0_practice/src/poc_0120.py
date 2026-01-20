@@ -135,6 +135,10 @@ def get_config(
         },
         "custom_fact_extraction_prompt": custom_extraction_prompt,
         "custom_update_memory_prompt": custom_update_memory_prompt,
+        # "reanker": {
+        #     "provider": "",
+        #     "config": {}
+        # },
         "version": "v1.1",
     }
 
