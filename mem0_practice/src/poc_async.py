@@ -3,16 +3,16 @@ import sys
 import time
 import logging
 from datetime import datetime
-from openai import OpenAI
+from openai import AsyncOpenAI
 from pymilvus import connections, db
 
 import redis
 
 os.environ["MEM0_TELEMETRY"] = "false"
-from mem0 import Memory
+from mem0 import AsyncMemory
 
 # 建立 logs 資料夾
-log_dir = "logs"
+log_dir = "logs-async"
 os.makedirs(log_dir, exist_ok=True)
 log_filename = datetime.now().strftime("%Y%m%d_%H%M%S.log")
 log_path = os.path.join(log_dir, log_filename)
@@ -27,7 +27,8 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 logger.info(f"Running file: {os.path.abspath(sys.argv[0])}")
 
-def get_openai_client(base_url: str = None) -> OpenAI:
+
+def get_openai_client(base_url: str = None) -> AsyncOpenAI:
     try:
         from env import OPENAI_API_KEY
         os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
@@ -35,8 +36,8 @@ def get_openai_client(base_url: str = None) -> OpenAI:
         OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 
     if base_url:
-        return OpenAI(api_key=OPENAI_API_KEY, base_url=base_url)
-    return OpenAI(api_key=OPENAI_API_KEY)
+        return AsyncOpenAI(api_key=OPENAI_API_KEY, base_url=base_url)
+    return AsyncOpenAI(api_key=OPENAI_API_KEY)
 
 
 def get_config(
@@ -153,49 +154,6 @@ def get_config(
         "version": "v1.1",
     }
 
-
-def init_milvus_db(config):
-    milvus_config = config["vector_store"]["config"]
-    milvus_url = milvus_config["url"]
-    milvus_db_name = milvus_config.get("db_name")
-
-    if milvus_db_name and not milvus_url.startswith("./"):  # Only for server-based Milvus
-        logger.info(f"Checking database '{milvus_db_name}' in Milvus at {milvus_url}...")
-        try:
-            connections.connect(uri=milvus_url)
-            if milvus_db_name not in db.list_database():
-                logger.info(f"Creating database: {milvus_db_name}")
-                db.create_database(milvus_db_name)
-            else:
-                logger.info(f"Database '{milvus_db_name}' already exists.")
-        except Exception as e:
-            logger.warning(f"Failed to initialize Milvus database: {e}")
-
-def clean_up_milvus_db(config):
-    milvus_config = config["vector_store"]["config"]
-    milvus_url = milvus_config["url"]
-    milvus_db_name = milvus_config.get("db_name")
-
-    if milvus_db_name and not milvus_url.startswith("./"):  # Only for server-based Milvus
-        logger.info(f"Cleaning up database '{milvus_db_name}' in Milvus at {milvus_url}...")
-        try:
-            connections.connect(uri=milvus_url)
-            if milvus_db_name in db.list_database():
-                # Switch to the target database
-                db.using_database(milvus_db_name)
-                from pymilvus import utility
-                collections = utility.list_collections()
-                for coll in collections:
-                    logger.info(f"Dropping collection: {coll}")
-                    utility.drop_collection(coll)
-                db.drop_database(milvus_db_name)
-                logger.info(f"Database '{milvus_db_name}' has been dropped.")
-            else:
-                logger.info(f"Database '{milvus_db_name}' does not exist.")
-        except Exception as e:
-            logger.warning(f"Failed to clean up Milvus database: {e}")
-
-
 def clean_up_redis_db(config):
     redis_config = config["vector_store"]["config"]
     redis_url = redis_config["redis_url"]
@@ -215,7 +173,36 @@ def clean_up_redis_db(config):
     except Exception as e:
         logger.warning(f"Failed to clean up Redis database: {e}")
 
-def add_memory(m, user_id: str, content: str):
+async def get_memory(async_memory, user_id: str):
+    # get all memories for user
+    memories = await async_memory.get_all(user_id=user_id)
+    # print(f"\n目前記憶內容:\n{memories}")
+    return memories
+
+async def search_memory(async_memory, user_id: str, query: str, limit: int = 100):
+    # def search(
+    #     self,
+    #     query: str,
+    #     *,
+    #     user_id: Optional[str] = None,
+    #     agent_id: Optional[str] = None,
+    #     run_id: Optional[str] = None,
+    #     limit: int = 100,
+    #     filters: Optional[Dict[str, Any]] = None,
+    #     threshold: Optional[float] = None,
+    #     rerank: bool = True,
+    # ):
+    memories = await async_memory.search(
+        query=query, 
+        user_id=user_id,
+        limit=limit,
+    )
+    logger.info(f"Relevant memories for the query '{query}':")
+    for i, entry in enumerate(memories.get("results", []), start=1):
+        logger.info(f"- {entry['memory']} (Score: {entry['score']})")
+    return memories
+
+async def add_memory(async_memory, user_id: str, content: str):
     # def add(
     #     self,
     #     messages,
@@ -229,7 +216,7 @@ def add_memory(m, user_id: str, content: str):
     #     prompt: Optional[str] = None,
     # )
     logger.info(f"Try to add memory for user '{user_id}': {content}")
-    res = m.add(
+    res = await async_memory.add(
         messages=content,
         user_id=user_id,
         metadata={"category": "fact"},
@@ -252,62 +239,30 @@ def add_memory(m, user_id: str, content: str):
         logger.warning("No memory was added.")
     return res
 
-
-def get_memory(m, user_id: str):
-    # get all memories for user
-    memories = m.get_all(user_id=user_id)
-    # print(f"\n目前記憶內容:\n{memories}")
-    return memories
-
-
-def search_memory(m, user_id: str, query: str, limit: int = 100):
-    # def search(
-    #     self,
-    #     query: str,
-    #     *,
-    #     user_id: Optional[str] = None,
-    #     agent_id: Optional[str] = None,
-    #     run_id: Optional[str] = None,
-    #     limit: int = 100,
-    #     filters: Optional[Dict[str, Any]] = None,
-    #     threshold: Optional[float] = None,
-    #     rerank: bool = True,
-    # ):
-    memories = m.search(
-        query=query, 
-        user_id=user_id,
-        limit=limit,
-    )
-    logger.info(f"Relevant memories for the query '{query}':")
-    for i, entry in enumerate(memories.get("results", []), start=1):
-        logger.info(f"- {entry['memory']} (Score: {entry['score']})")
-    return memories
-
-
-def chat_with_memory(
-        client,
-        m,
+async def chat_with_memory(
+        asyncclient,
+        async_memory,
         user_id: str,
         text: str,
         model_name: str,
         top_k: int = 5,):
     system_prompt = f"You are a helpful AI."
 
-    memories = get_memory(m, user_id)
-
+    memories = await get_memory(async_memory, user_id)
     existing_memory = memories.get("results", [])
     logger.info(f"{user_id} has {len(existing_memory)} existing memories")
+
     if len(existing_memory) > 0:
         # logger.info(f"Searching Top 100 relevant memories, user query: {text}")
-        # relevant_memories = search_memory(
-        #     m, 
+        # relevant_memories = await search_memory(
+        #     async_memory, 
         #     user_id, 
         #     text
         # )
 
         logger.info(f"Searching Top {top_k} relevant memories, user query: {text}")
-        relevant_memories = search_memory(
-            m, 
+        relevant_memories = await search_memory(
+            async_memory, 
             user_id, 
             text, 
             limit=top_k
@@ -322,7 +277,7 @@ def chat_with_memory(
             )
 
     logger.info(f"System Prompt:\n{system_prompt}")
-    response = client.chat.completions.create(
+    response = await asyncclient.chat.completions.create(
         model=model_name,
         messages=[
             {"role": "system", "content": system_prompt},
@@ -332,35 +287,8 @@ def chat_with_memory(
 
     return response.choices[0].message.content
 
-def chat_with_stm(
-        client, 
-        user_id: str, 
-        text: str, 
-        model_name: str, 
-        history: list,
-        stm: int = 2
-    ):
-    system_prompt = f"You are a helpful AI."
 
-    history_text = "\n".join([
-        f"Human: {entry['human']}\nAI: {entry['ai']}" for entry in history[-stm:]
-    ])
-    if history_text:
-        system_prompt = f"You are a helpful AI.\nRecent conversation:\n{history_text}"
-
-    logger.info(f"System Prompt:\n{system_prompt}")
-    response = client.chat.completions.create(
-        model=model_name,
-        messages=[
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": text},
-        ],
-    )
-
-    return response.choices[0].message.content
-
-## llm + mem0
-def main_llm_mem0(vector_store: str = "milvus", async_mode: bool = False):
+async def main_llm_mem0(vector_store: str = "milvus", async_mode: bool = False):
     database_name = "test_mem0_db"
     collection_name = "test_mem0_collection"
     model_name = "gpt-5.2-2025-12-11"
@@ -381,18 +309,15 @@ def main_llm_mem0(vector_store: str = "milvus", async_mode: bool = False):
         embedding_model=embedding_model,
         rerank_model=rerank_model
     )
-    client = get_openai_client()
+    asyncclient = get_openai_client()
 
-    if vector_store == "milvus":
-        init_milvus_db(memory_config)
-
-    memory = Memory.from_config(memory_config)
+    async_memory = await AsyncMemory.from_config(memory_config)
     logger.info("[Memory Instance Config]")
-    if hasattr(memory, 'config'):
-        logger.info(memory.config)
+    if hasattr(async_memory, 'config'):
+        logger.info(async_memory.config)
     else:
-        logger.info(vars(memory))
-
+        logger.info(vars(async_memory))
+    
     user_icon = "👤"
     bot_icon = "🤖"
     user_id = input(f"\n{user_icon} Please enter your name: ").strip() or "User"
@@ -424,82 +349,28 @@ def main_llm_mem0(vector_store: str = "milvus", async_mode: bool = False):
         logger.info("=" * 50)
         logger.info(f"[Round {question_count}] Human Question:\n{question}")
         question = question.encode('utf-8', 'ignore').decode('utf-8', 'ignore')
-        response = chat_with_memory(client, memory, user_id, question, model_name)
+        response = await chat_with_memory(asyncclient, async_memory, user_id, question, model_name)
         history.append({"human": question, "ai": response})
         logger.info(f"[Round {question_count}] AI Response:\n{response}")
-        add_memory(memory, user_id, question)
+        await add_memory(async_memory, user_id, question)
         if question_count in user_feedbacks.keys():
             feedback = user_feedbacks[question_count]
             context = f"User Message: {question}\nLLM Response: {response}\nUser Feedback: {feedback}"
             logger.info(f"[Round {question_count}] User Feedback:\n{feedback}")
-            add_memory(memory, user_id, context)
+            await add_memory(async_memory, user_id, context)
         question_count += 1
-        time.sleep(3)
+        await asyncio.sleep(3)
 
     logger.info("\n=== Conversation History ===")
     for i, entry in enumerate(history, 1):
         logger.info(f"Round {i} Human: {entry['human']}")
         logger.info(f"Round {i} AI: {entry['ai']}")
 
-    if vector_store == "milvus":
-        logger.info("Cleaning up Milvus DB...")
-        clean_up_milvus_db(memory_config)
-        logger.info("Milvus DB cleanup complete.")
-    elif vector_store == "redis":
+    if vector_store == "redis":
         logger.info("Cleaning up Redis DB...")
         clean_up_redis_db(memory_config)
         logger.info("Redis DB cleanup complete.")
 
-
-## llm+stm2
-def main_llm_stm():
-    database_name = "test_mem0_db"
-    collection_name = "test_mem0_collection"
-    model_name = "gpt-5.2-2025-12-11"
-    embedding_model = "text-embedding-3-large"
-
-    logger.info("Initializing Memory with Milvus backend...")
-    logger.info(f"Database Name: {database_name}")
-    logger.info(f"Collection Name: {collection_name}")
-    logger.info(f"LLM Model: {model_name}")
-    logger.info(f"Embedding Model: {embedding_model}\n")
-
-    client = get_openai_client()
-
-    user_icon = "👤"
-    bot_icon = "🤖"
-    user_id = input(f"{user_icon} Please enter your name: ").strip() or "User"
-    logger.info(f"{bot_icon} Welcome, {user_id}! Type 'exit' to end the conversation.")
-
-    question_count = 1
-    history = []  # 記錄 human/ai 對話
-    preset_questions = [
-        "我最喜歡的水果是蘋果",          # 關鍵
-        "我不太喜歡吃太甜的水果",        # 關鍵偏好
-        "你覺得水果每天吃好嗎？",        # 無關
-        "很多人早餐會吃水果，你怎麼看？", # 無關
-        "最近天氣變熱了",                # 干擾
-        "幫我推薦一種「適合我」的水果"
-    ]
-
-    for question in preset_questions:
-        logger.info("=" * 50)
-        logger.info(f"[{question_count}] Human Question:\n{question}")
-        question = question.encode('utf-8', 'ignore').decode('utf-8', 'ignore')
-        response = chat_with_stm(client, user_id, question, model_name, history)
-        history.append({"human": question, "ai": response})
-        logger.info(f"[{question_count}] AI Response:\n{response}")
-        question_count += 1
-
-    logger.info("\n=== Conversation History ===")
-    for i, entry in enumerate(history, 1):
-        logger.info(f"Round {i} Human: {entry['human']}")
-        logger.info(f"Round {i} AI: {entry['ai']}")
-
 if __name__ == "__main__":
-    main_llm_mem0(vector_store="redis")
-    # main_llm_stm()
-
-
-
-# reference: https://github.com/mem0ai/mem0/blob/dba7f0458aeb50aa7078d36eaefa2405afbee620/LLM.md
+    import asyncio
+    asyncio.run(main_llm_mem0(vector_store="redis", async_mode=True))
