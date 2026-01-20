@@ -234,6 +234,16 @@ def add_memory(m, user_id: str, content: str):
         user_id=user_id,
         metadata={"category": "fact"},
     )
+    """memory.add messages vs metadata 差異
+    - messages:
+        - 影響語意搜尋的結果
+        - 會被向量化，影響相似度比對
+        - 直接成為記憶的一部分，LLM 讀取時會看到
+    - metadata:
+        - 用於資料管理、分組或特定條件查詢
+        - 預設不會影響語意比對，僅供過濾
+        - LLM 通常看不到，除非你額外傳遞給它
+    """
     if res.get("results"):
         logger.info(f"Memories operation: {len(res.get('results'))}")
         for i, entry in enumerate(res.get("results")):
@@ -399,18 +409,16 @@ def main_llm_mem0(vector_store: str = "milvus"):
         "下週我要去日本東京出差，我想在那邊找幾間好吃的素食餐廳。",
         "最近「麻糬」變得很懶，現在都要到 8 點才肯起床，真拿牠沒辦法。",
         "我正在考慮把我的筆電換成 Mac，因為 Go 的開發環境好像比較方便。",
-        "我發現我上次說錯了，我不是對海鮮過敏，我是對「蝦蟹類」過敏，魚肉是可以吃的",
-        "幫我規劃一下東京出差的晚餐，記得考慮我的過敏和飲食習慣。",
+        "我發現我上次說錯了，我不是對海鮮過敏，我是對「蝦蟹類」過敏，魚肉是可以吃的", # add feedback
+        "幫我規劃一下東京出差的晚餐。", # add feedback
         "其實「麻糬」上個月送給住在南部的親戚養了，我現在家裡沒有寵物。",
         "你還記得我養的是什麼狗，以及我現在主要用什麼程式語言工作嗎？"
     ]
 
-    user_feedbacks = []
-    # 在特定Round後加入使用者反饋
-    # m.add(
-    # "使用者反饋：AI 成功修正了過敏資訊，使用者表示非常重要且正確。", 
-    # user_id=user_id, 
-    # metadata={"action": "correction_feedback", "is_important": True})
+    user_feedbacks = {
+        9: "非常重要且正確",
+        10: "不對，你提到的餐廳仍有過敏源"
+    }
 
     for question in preset_questions:
         logger.info("=" * 50)
@@ -420,6 +428,11 @@ def main_llm_mem0(vector_store: str = "milvus"):
         history.append({"human": question, "ai": response})
         logger.info(f"[Round {question_count}] AI Response:\n{response}")
         add_memory(memory, user_id, question)
+        if question_count in user_feedbacks.keys():
+            feedback = user_feedbacks[question_count]
+            context = f"User Message: {question}\nLLM Response: {response}\nUser Feedback: {feedback}"
+            logger.info(f"[Round {question_count}] User Feedback:\n{feedback}")
+            add_memory(memory, user_id, context)
         question_count += 1
         time.sleep(3)
 
