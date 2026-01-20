@@ -217,6 +217,18 @@ def get_memory(m, user_id: str):
 
 
 def search_memory(m, user_id: str, query: str, top_k: int = 5):
+    # def search(
+    #     self,
+    #     query: str,
+    #     *,
+    #     user_id: Optional[str] = None,
+    #     agent_id: Optional[str] = None,
+    #     run_id: Optional[str] = None,
+    #     limit: int = 100,
+    #     filters: Optional[Dict[str, Any]] = None,
+    #     threshold: Optional[float] = None,
+    #     rerank: bool = True,
+    # ):
     memories = m.search(query=query, user_id=user_id)
     logger.info(f"Relevant memories for the query '{query}':")
     for i, entry in enumerate(memories.get("results", []), start=1):
