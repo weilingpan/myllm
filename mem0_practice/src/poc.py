@@ -22,7 +22,7 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s %(levelname)s [%(filename)s] %(message)s',
     datefmt='%Y-%m-%d %H:%M:%S',
-    # handlers=[logging.FileHandler(log_path, encoding="utf-8"), logging.StreamHandler()]
+    handlers=[logging.FileHandler(log_path, encoding="utf-8"), logging.StreamHandler()]
 )
 logger = logging.getLogger(__name__)
 logger.info(f"Running file: {os.path.abspath(sys.argv[0])}")
@@ -119,6 +119,7 @@ def get_config(
         #         # "embedding_model_dims": 1536,
         #     },
         # },
+        # Redis 向量搜尋預設回傳的是距離，距離越小越相關
         "vector_store": {
             "provider": "redis",
             "config": {
@@ -236,7 +237,7 @@ def add_memory(m, user_id: str, content: str):
     if res.get("results"):
         logger.info(f"Memories operation: {len(res.get('results'))}")
         for i, entry in enumerate(res.get("results")):
-            logger.info(f"- event: {entry['event']}")
+            logger.info(entry)
     else:
         logger.warning("No memory was added.")
     return res
@@ -249,7 +250,7 @@ def get_memory(m, user_id: str):
     return memories
 
 
-def search_memory(m, user_id: str, query: str):
+def search_memory(m, user_id: str, query: str, limit: int = 100):
     # def search(
     #     self,
     #     query: str,
@@ -262,7 +263,11 @@ def search_memory(m, user_id: str, query: str):
     #     threshold: Optional[float] = None,
     #     rerank: bool = True,
     # ):
-    memories = m.search(query=query, user_id=user_id)
+    memories = m.search(
+        query=query, 
+        user_id=user_id,
+        limit=limit,
+    )
     logger.info(f"Relevant memories for the query '{query}':")
     for i, entry in enumerate(memories.get("results", []), start=1):
         logger.info(f"- {entry['memory']} (Score: {entry['score']})")
@@ -274,16 +279,29 @@ def chat_with_memory(
         m,
         user_id: str,
         text: str,
-        model_name: str):
+        model_name: str,
+        top_k: int = 5,):
     system_prompt = f"You are a helpful AI."
 
     memories = get_memory(m, user_id)
 
     existing_memory = memories.get("results", [])
-    logger.info(f"{user_id} has {len(existing_memory)} existing memories count")
+    logger.info(f"{user_id} has {len(existing_memory)} existing memories")
     if len(existing_memory) > 0:
-        logger.info("Searching for relevant memories...")
-        relevant_memories = search_memory(m, user_id, text)
+        # logger.info(f"Searching Top 100 relevant memories, user query: {text}")
+        # relevant_memories = search_memory(
+        #     m, 
+        #     user_id, 
+        #     text
+        # )
+
+        logger.info(f"Searching Top {top_k} relevant memories, user query: {text}")
+        relevant_memories = search_memory(
+            m, 
+            user_id, 
+            text, 
+            limit=top_k
+        )
         if relevant_memories["results"]:
             memories = "\n".join(
                 f"- {entry['memory']}" for entry in relevant_memories["results"]
@@ -293,7 +311,7 @@ def chat_with_memory(
                 f"User memories:\n{memories}\n"
             )
 
-    logger.info(f"System Prompt: {system_prompt}")
+    logger.info(f"System Prompt:\n{system_prompt}")
     response = client.chat.completions.create(
         model=model_name,
         messages=[
@@ -320,7 +338,7 @@ def chat_with_stm(
     if history_text:
         system_prompt = f"You are a helpful AI.\nRecent conversation:\n{history_text}"
 
-    logger.info(f"System Prompt: {system_prompt}")
+    logger.info(f"System Prompt:\n{system_prompt}")
     response = client.chat.completions.create(
         model=model_name,
         messages=[
@@ -343,7 +361,7 @@ def main_llm_mem0(vector_store: str = "milvus"):
     logger.info(f"Database Name: {database_name}")
     logger.info(f"Collection Name: {collection_name}")
     logger.info(f"LLM Model: {model_name}")
-    logger.info(f"Embedding Model: {embedding_model}\n")
+    logger.info(f"Embedding Model: {embedding_model}")
     logger.info(f"Rerank Model: {rerank_model}\n")
 
     memory_config = get_config(
@@ -373,21 +391,34 @@ def main_llm_mem0(vector_store: str = "milvus"):
     question_count = 1
     history = []  # 記錄 human/ai 對話
     preset_questions = [
-        "我最喜歡的水果是蘋果",          # 關鍵
-        "我不太喜歡吃太甜的水果",        # 關鍵偏好
-        "你覺得水果每天吃好嗎？",        # 無關
-        "很多人早餐會吃水果，你怎麼看？", # 無關
-        "最近天氣變熱了",                # 干擾
-        "幫我推薦一種「適合我」的水果"
+        f"你好，我叫{user_id}，我目前在台北的一家科技公司擔任前端工程師。",
+        "我最近開始學習 Python，因為我想把 AI 功能整合到我們的產品中。",
+        "我對海鮮過敏，所以聚餐時我通常只吃素食或牛排。",
+        "我有一隻叫「麻糬」的柴犬，牠每天早上 6 點就會吵著要出門散步。",
+        "其實我最近換工作了，我現在轉職成了後端工程師，主要用 Go 語言。",
+        "下週我要去日本東京出差，我想在那邊找幾間好吃的素食餐廳。",
+        "最近「麻糬」變得很懶，現在都要到 8 點才肯起床，真拿牠沒辦法。",
+        "我正在考慮把我的筆電換成 Mac，因為 Go 的開發環境好像比較方便。",
+        "我發現我上次說錯了，我不是對海鮮過敏，我是對「蝦蟹類」過敏，魚肉是可以吃的",
+        "幫我規劃一下東京出差的晚餐，記得考慮我的過敏和飲食習慣。",
+        "其實「麻糬」上個月送給住在南部的親戚養了，我現在家裡沒有寵物。",
+        "你還記得我養的是什麼狗，以及我現在主要用什麼程式語言工作嗎？"
     ]
 
+    user_feedbacks = []
+    # 在特定Round後加入使用者反饋
+    # m.add(
+    # "使用者反饋：AI 成功修正了過敏資訊，使用者表示非常重要且正確。", 
+    # user_id=user_id, 
+    # metadata={"action": "correction_feedback", "is_important": True})
+
     for question in preset_questions:
-        logger.info("\n" + "=" * 50)
-        logger.info(f"[{question_count}] Human Question:\n{question}")
+        logger.info("=" * 50)
+        logger.info(f"[Round {question_count}] Human Question:\n{question}")
         question = question.encode('utf-8', 'ignore').decode('utf-8', 'ignore')
         response = chat_with_memory(client, memory, user_id, question, model_name)
         history.append({"human": question, "ai": response})
-        logger.info(f"[{question_count}] AI Response:\n{response}")
+        logger.info(f"[Round {question_count}] AI Response:\n{response}")
         add_memory(memory, user_id, question)
         question_count += 1
         time.sleep(3)
@@ -439,7 +470,7 @@ def main_llm_stm():
     ]
 
     for question in preset_questions:
-        logger.info("\n" + "=" * 50)
+        logger.info("=" * 50)
         logger.info(f"[{question_count}] Human Question:\n{question}")
         question = question.encode('utf-8', 'ignore').decode('utf-8', 'ignore')
         response = chat_with_stm(client, user_id, question, model_name, history)

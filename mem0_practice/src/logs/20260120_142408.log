@@ -1,0 +1,1289 @@
+2026-01-20 14:24:08 INFO [poc.py] Running file: /app/poc.py
+2026-01-20 14:24:08 INFO [poc.py] Initializing Memory with redis backend...
+2026-01-20 14:24:08 INFO [poc.py] Database Name: test_mem0_db
+2026-01-20 14:24:08 INFO [poc.py] Collection Name: test_mem0_collection
+2026-01-20 14:24:08 INFO [poc.py] LLM Model: gpt-5.2-2025-12-11
+2026-01-20 14:24:08 INFO [poc.py] Embedding Model: text-embedding-3-large
+2026-01-20 14:24:08 INFO [poc.py] Rerank Model: GPT-4o-mini
+
+2026-01-20 14:24:08 INFO [index.py] Index already exists, overwriting.
+2026-01-20 14:24:08 INFO [index.py] Index already exists, overwriting.
+2026-01-20 14:24:08 INFO [poc.py] [Memory Instance Config]
+2026-01-20 14:24:08 INFO [poc.py] vector_store=VectorStoreConfig(provider='redis', config=RedisDBConfig(redis_url='redis://redis-stack:6379', collection_name='test_mem0_collection', embedding_model_dims=1536)) llm=LlmConfig(provider='openai', config={'model': 'gpt-5.2-2025-12-11'}) embedder=EmbedderConfig(provider='openai', config={'model': 'text-embedding-3-large'}) history_db_path='/root/.mem0/history.db' graph_store=GraphStoreConfig(provider='neo4j', config=None, llm=None, custom_prompt=None, threshold=0.7) reranker=None version='v1.1' custom_fact_extraction_prompt='\n    If it contains long-term useful information about the user\'s preferences, identity, or status, extract it.\n    If not, output "None".\n    Only output the extracted facts, do not explain\n\n    Input: Hi.\n    Output: {{"facts" : []}}\n\n    Input: The weather is nice today.\n    Output: {{"facts" : []}}\n\n    Input: My order #12345 hasn\'t arrived yet.\n    Output: {{"facts" : ["Order #12345 not received"]}}\n\n    Input: I\'m John Doe, and I\'d like to return the shoes I bought last week.\n    Output: {{"facts" : ["Customer name: John Doe", "Wants to return shoes", "Purchase made last week"]}}\n\n    Input: I ordered a red shirt, size medium, but received a blue one instead.\n    Output: {{"facts" : ["Ordered red shirt, size medium", "Received blue shirt instead"]}}\n\n    Return the facts and customer information in a json format as shown above.\n    ' custom_update_memory_prompt=None
+2026-01-20 14:24:17 INFO [poc.py] 🤖 Welcome, Elsa! Type 'exit' to end the conversation.
+2026-01-20 14:24:17 INFO [poc.py] ==================================================
+2026-01-20 14:24:17 INFO [poc.py] [Round 1] Human Question:
+你好，我叫Elsa，我目前在台北的一家科技公司擔任前端工程師。
+2026-01-20 14:24:17 INFO [poc.py] Elsa has 0 existing memories
+2026-01-20 14:24:17 INFO [poc.py] System Prompt:
+You are a helpful AI.
+2026-01-20 14:24:22 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-20 14:24:22 INFO [poc.py] [Round 1] AI Response:
+你好 Elsa，你好！  
+目前在台北做前端工程師很酷，也很能跟上很多新技術。
+
+你想聊哪一塊我可以幫上忙？例如：  
+1) 前端技術/架構（React/Vue、狀態管理、效能優化、SSR/CSR）  
+2) 作品集與履歷（專案描述怎麼寫、亮點整理、面試題準備）  
+3) 職涯規劃（往資深/Tech Lead、全端、或轉產品/管理）  
+4) 工作疑難雜症（CI/CD、測試、TypeScript、可維護性）
+
+你現在最想解決的目標或卡關點是什麼？
+2026-01-20 14:24:22 INFO [poc.py] Try to add memory for user 'Elsa': 你好，我叫Elsa，我目前在台北的一家科技公司擔任前端工程師。
+2026-01-20 14:24:23 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-20 14:24:23 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-20 14:24:24 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-20 14:24:24 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-20 14:24:24 INFO [main.py] Total existing memories: 0
+2026-01-20 14:24:26 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-20 14:24:26 INFO [main.py] {'id': '0', 'text': 'Customer name: Elsa', 'event': 'ADD'}
+2026-01-20 14:24:26 INFO [main.py] {'id': '1', 'text': 'Located in Taipei', 'event': 'ADD'}
+2026-01-20 14:24:26 INFO [main.py] {'id': '2', 'text': 'Works as a frontend engineer at a technology company', 'event': 'ADD'}
+2026-01-20 14:24:26 INFO [poc.py] Memories operation: 3
+2026-01-20 14:24:26 INFO [poc.py] {'id': '3240b2df-07fa-479d-97c9-3e4b0691e332', 'memory': 'Customer name: Elsa', 'event': 'ADD'}
+2026-01-20 14:24:26 INFO [poc.py] {'id': '411e7345-94e8-4f4f-91f4-46a7ffcaa2a0', 'memory': 'Located in Taipei', 'event': 'ADD'}
+2026-01-20 14:24:26 INFO [poc.py] {'id': '2ff2d611-87b8-4e9e-810b-0164237b473b', 'memory': 'Works as a frontend engineer at a technology company', 'event': 'ADD'}
+2026-01-20 14:24:29 INFO [poc.py] ==================================================
+2026-01-20 14:24:29 INFO [poc.py] [Round 2] Human Question:
+我最近開始學習 Python，因為我想把 AI 功能整合到我們的產品中。
+2026-01-20 14:24:29 INFO [poc.py] Elsa has 3 existing memories
+2026-01-20 14:24:29 INFO [poc.py] Searching Top 100 relevant memories, user query: 我最近開始學習 Python，因為我想把 AI 功能整合到我們的產品中。
+2026-01-20 14:24:29 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-20 14:24:29 INFO [poc.py] Relevant memories for the query '我最近開始學習 Python，因為我想把 AI 功能整合到我們的產品中。':
+2026-01-20 14:24:29 INFO [poc.py] - Works as a frontend engineer at a technology company (Score: 0.710198402405)
+2026-01-20 14:24:29 INFO [poc.py] - Located in Taipei (Score: 0.844132244587)
+2026-01-20 14:24:29 INFO [poc.py] - Customer name: Elsa (Score: 0.897407948971)
+2026-01-20 14:24:29 INFO [poc.py] Searching Top 5 relevant memories, user query: 我最近開始學習 Python，因為我想把 AI 功能整合到我們的產品中。
+2026-01-20 14:24:30 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-20 14:24:30 INFO [poc.py] Relevant memories for the query '我最近開始學習 Python，因為我想把 AI 功能整合到我們的產品中。':
+2026-01-20 14:24:30 INFO [poc.py] - Works as a frontend engineer at a technology company (Score: 0.710198402405)
+2026-01-20 14:24:30 INFO [poc.py] - Located in Taipei (Score: 0.844132244587)
+2026-01-20 14:24:30 INFO [poc.py] - Customer name: Elsa (Score: 0.897407948971)
+2026-01-20 14:24:30 INFO [poc.py] System Prompt:
+You are a helpful AI. Answer the question based on query and memories.
+User memories:
+- Works as a frontend engineer at a technology company
+- Located in Taipei
+- Customer name: Elsa
+
+2026-01-20 14:24:48 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-20 14:24:48 INFO [poc.py] [Round 2] AI Response:
+很棒的方向。以你前端工程師、想把 AI 整合進產品的目標來看，學 Python 最有效的是走「能做出可上線的 AI 功能」這條路：會呼叫模型、會做資料處理、會把服務包成 API、再跟前端串起來。
+
+下面給你一個實務導向的學習路線（偏產品整合）：
+
+## 1) 先把 Python 基礎補到「能寫後端服務」
+你不需要一開始就鑽語法細節，先確保能寫出可維護的程式與服務：
+- Python 基本語法（資料型別、函式、類別、例外處理）
+- 常用標準庫：`json`、`datetime`、`pathlib`、`logging`
+- 套件管理：`pip` / `uv` / `poetry`（擇一）
+- 虛擬環境：`venv`
+- 型別提示：`typing`（對團隊協作很加分）
+
+## 2) 立即切入「把 AI 當 API 使用」
+產品整合最常見是「呼叫 LLM → 回傳結果 → 前端呈現」：
+- 了解 Prompt 基本技巧（格式、限制、輸出 schema）
+- 結構化輸出（JSON schema / function calling / tools）
+- 串流回傳（streaming，前端體驗更好）
+- 成本與延遲管理（token、快取、重試）
+
+## 3) 用 FastAPI 做一個最小可用的 AI 後端
+你是前端背景，FastAPI 會很順：
+- 做 `/chat` 或 `/summarize` 端點
+- 加上 CORS、API key 驗證、rate limit（至少其中一兩個）
+- 日誌與可觀測性（request id、latency、error logs）
+
+## 4) 開始做「RAG」把產品知識接進模型
+如果你要讓模型回答公司文件/產品資料，RAG 幾乎是標配：
+- 文件切分（chunking）與清理
+- 向量化（embeddings）
+- 向量資料庫（Postgres pgvector / Pinecone / Weaviate / FAISS）
+- 檢索 + 重排（rerank，可選）
+- 評估（你要知道答案品質是否真的提升）
+
+## 5) 上線必備：安全、隱私、與品質控管
+- Prompt injection 防護（至少做輸入清洗、系統提示隔離、allowlist tools）
+- PII/敏感資訊處理（遮罩、避免記錄原文）
+- 回答的引用來源（citations），降低幻覺風險
+- 快取與降級策略（模型不可用時怎麼辦）
+
+---
+
+### 我想先確認一下你的目標，才能給你更精準的「下一步」
+Elsa，你打算整合的 AI 功能比較像哪一類？
+1) 客服/FAQ 聊天機器人  
+2) 文件摘要、生成、改寫（行銷文/信件/報告）  
+3) 搜尋/知識庫（把內部文件接進來）  
+4) 影像/語音相關  
+5) 其他（你描述一下）
+
+另外：你們產品目前後端是什麼技術（Node/Go/Java…）？  
+如果後端不是 Python，我也可以給你「Python 做 AI service、再由既有後端轉接」的架構建議。
+2026-01-20 14:24:48 INFO [poc.py] Try to add memory for user 'Elsa': 我最近開始學習 Python，因為我想把 AI 功能整合到我們的產品中。
+2026-01-20 14:24:50 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-20 14:24:50 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-20 14:24:50 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-20 14:24:50 INFO [main.py] Total existing memories: 3
+2026-01-20 14:24:52 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-20 14:24:52 INFO [main.py] {'id': '0', 'text': 'Works as a frontend engineer at a technology company', 'event': 'NONE'}
+2026-01-20 14:24:52 INFO [main.py] NOOP for Memory.
+2026-01-20 14:24:52 INFO [main.py] {'id': '1', 'text': 'Customer name: Elsa', 'event': 'NONE'}
+2026-01-20 14:24:52 INFO [main.py] NOOP for Memory.
+2026-01-20 14:24:52 INFO [main.py] {'id': '2', 'text': 'Located in Taipei', 'event': 'NONE'}
+2026-01-20 14:24:52 INFO [main.py] NOOP for Memory.
+2026-01-20 14:24:52 INFO [main.py] {'id': '3', 'text': 'User recently started learning Python', 'event': 'ADD'}
+2026-01-20 14:24:52 INFO [main.py] {'id': '4', 'text': 'User wants to integrate AI functionality into their product', 'event': 'ADD'}
+2026-01-20 14:24:52 INFO [poc.py] Memories operation: 2
+2026-01-20 14:24:52 INFO [poc.py] {'id': '591d1089-d429-4dc0-b9e7-f5b1e23c24b9', 'memory': 'User recently started learning Python', 'event': 'ADD'}
+2026-01-20 14:24:52 INFO [poc.py] {'id': '2d0774e9-a82d-4678-b493-ebe7bf83b24b', 'memory': 'User wants to integrate AI functionality into their product', 'event': 'ADD'}
+2026-01-20 14:24:55 INFO [poc.py] ==================================================
+2026-01-20 14:24:55 INFO [poc.py] [Round 3] Human Question:
+我對海鮮過敏，所以聚餐時我通常只吃素食或牛排。
+2026-01-20 14:24:55 INFO [poc.py] Elsa has 5 existing memories
+2026-01-20 14:24:55 INFO [poc.py] Searching Top 100 relevant memories, user query: 我對海鮮過敏，所以聚餐時我通常只吃素食或牛排。
+2026-01-20 14:24:56 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-20 14:24:56 INFO [poc.py] Relevant memories for the query '我對海鮮過敏，所以聚餐時我通常只吃素食或牛排。':
+2026-01-20 14:24:56 INFO [poc.py] - Works as a frontend engineer at a technology company (Score: 0.915145277977)
+2026-01-20 14:24:56 INFO [poc.py] - Customer name: Elsa (Score: 0.919456779957)
+2026-01-20 14:24:56 INFO [poc.py] - Located in Taipei (Score: 0.937204539776)
+2026-01-20 14:24:56 INFO [poc.py] - User recently started learning Python (Score: 0.974866092205)
+2026-01-20 14:24:56 INFO [poc.py] - User wants to integrate AI functionality into their product (Score: 1.00251531601)
+2026-01-20 14:24:56 INFO [poc.py] Searching Top 5 relevant memories, user query: 我對海鮮過敏，所以聚餐時我通常只吃素食或牛排。
+2026-01-20 14:24:56 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-20 14:24:56 INFO [poc.py] Relevant memories for the query '我對海鮮過敏，所以聚餐時我通常只吃素食或牛排。':
+2026-01-20 14:24:56 INFO [poc.py] - Works as a frontend engineer at a technology company (Score: 0.915131926537)
+2026-01-20 14:24:56 INFO [poc.py] - Customer name: Elsa (Score: 0.919534623623)
+2026-01-20 14:24:56 INFO [poc.py] - Located in Taipei (Score: 0.937228918076)
+2026-01-20 14:24:56 INFO [poc.py] - User recently started learning Python (Score: 0.974871218204)
+2026-01-20 14:24:56 INFO [poc.py] - User wants to integrate AI functionality into their product (Score: 1.00252091885)
+2026-01-20 14:24:56 INFO [poc.py] System Prompt:
+You are a helpful AI. Answer the question based on query and memories.
+User memories:
+- Works as a frontend engineer at a technology company
+- Customer name: Elsa
+- Located in Taipei
+- User recently started learning Python
+- User wants to integrate AI functionality into their product
+
+2026-01-20 14:25:05 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-20 14:25:05 INFO [poc.py] [Round 3] AI Response:
+了解，Elsa。你對海鮮過敏的話，聚餐時選擇「全素/奶蛋素」或「牛排」確實是比較安全的方向。幾個實用做法讓你更安心：
+
+- **先跟店家確認**：是否有「海鮮高湯、蝦米、魚露、干貝醬、XO醬」等隱藏成分（很多湯、醬汁、炒菜會用到）。
+- **避免交叉污染**：請店家說明是否能分鍋/分煎台/分油鍋，尤其是煎台同時處理魚蝦的餐廳。
+- **點餐用語**（可直接複製給店員）  
+  - 「我對海鮮嚴重過敏，請不要加任何海鮮、魚露、蝦米、海鮮高湯，並盡量避免同鍋/同油炸/同煎台。」
+- **選餐小建議**：  
+  - 素食：清炒蔬菜、豆腐、蛋類（如果你吃蛋奶）、乾拌/乾炒類通常比湯麵安全（湯底常有海鮮成分）。  
+  - 牛排：優先選「原切、少加工」的；醬汁另外放，先確認是否含魚露/鰹魚粉等。
+- **若是較嚴重過敏**：建議隨身備藥，並跟同桌先說明你的過敏狀況。
+
+你通常是「吃到就會不適」還是「嚴重型（會喘、腫、起疹）」？我可以幫你把點餐策略再調整得更保守或更方便。
+2026-01-20 14:25:05 INFO [poc.py] Try to add memory for user 'Elsa': 我對海鮮過敏，所以聚餐時我通常只吃素食或牛排。
+2026-01-20 14:25:06 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-20 14:25:06 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-20 14:25:07 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-20 14:25:07 INFO [main.py] Total existing memories: 5
+2026-01-20 14:25:10 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-20 14:25:10 INFO [main.py] {'id': '0', 'text': 'Customer name: Elsa', 'event': 'NONE'}
+2026-01-20 14:25:10 INFO [main.py] NOOP for Memory.
+2026-01-20 14:25:10 INFO [main.py] {'id': '1', 'text': 'Works as a frontend engineer at a technology company', 'event': 'NONE'}
+2026-01-20 14:25:10 INFO [main.py] NOOP for Memory.
+2026-01-20 14:25:10 INFO [main.py] {'id': '2', 'text': 'User recently started learning Python', 'event': 'NONE'}
+2026-01-20 14:25:10 INFO [main.py] NOOP for Memory.
+2026-01-20 14:25:10 INFO [main.py] {'id': '3', 'text': 'User wants to integrate AI functionality into their product', 'event': 'NONE'}
+2026-01-20 14:25:10 INFO [main.py] NOOP for Memory.
+2026-01-20 14:25:10 INFO [main.py] {'id': '4', 'text': 'Located in Taipei', 'event': 'NONE'}
+2026-01-20 14:25:10 INFO [main.py] NOOP for Memory.
+2026-01-20 14:25:10 INFO [main.py] {'id': '5', 'text': 'User is allergic to seafood', 'event': 'ADD'}
+2026-01-20 14:25:10 INFO [main.py] {'id': '6', 'text': 'At group meals, user usually eats vegetarian food or steak', 'event': 'ADD'}
+2026-01-20 14:25:10 INFO [poc.py] Memories operation: 2
+2026-01-20 14:25:10 INFO [poc.py] {'id': 'fd38ee9f-7429-4338-97a0-4bad21202dc7', 'memory': 'User is allergic to seafood', 'event': 'ADD'}
+2026-01-20 14:25:10 INFO [poc.py] {'id': 'f77a9fe0-16f0-4a58-815f-129c76475ceb', 'memory': 'At group meals, user usually eats vegetarian food or steak', 'event': 'ADD'}
+2026-01-20 14:25:13 INFO [poc.py] ==================================================
+2026-01-20 14:25:13 INFO [poc.py] [Round 4] Human Question:
+我有一隻叫「麻糬」的柴犬，牠每天早上 6 點就會吵著要出門散步。
+2026-01-20 14:25:13 INFO [poc.py] Elsa has 7 existing memories
+2026-01-20 14:25:13 INFO [poc.py] Searching Top 100 relevant memories, user query: 我有一隻叫「麻糬」的柴犬，牠每天早上 6 點就會吵著要出門散步。
+2026-01-20 14:25:13 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-20 14:25:13 INFO [poc.py] Relevant memories for the query '我有一隻叫「麻糬」的柴犬，牠每天早上 6 點就會吵著要出門散步。':
+2026-01-20 14:25:13 INFO [poc.py] - Customer name: Elsa (Score: 0.869496107101)
+2026-01-20 14:25:13 INFO [poc.py] - Located in Taipei (Score: 0.916045606136)
+2026-01-20 14:25:13 INFO [poc.py] - User is allergic to seafood (Score: 0.922545850277)
+2026-01-20 14:25:13 INFO [poc.py] - User wants to integrate AI functionality into their product (Score: 0.934525370598)
+2026-01-20 14:25:13 INFO [poc.py] - At group meals, user usually eats vegetarian food or steak (Score: 0.937099575996)
+2026-01-20 14:25:13 INFO [poc.py] - User recently started learning Python (Score: 0.96384292841)
+2026-01-20 14:25:13 INFO [poc.py] - Works as a frontend engineer at a technology company (Score: 0.983357489109)
+2026-01-20 14:25:13 INFO [poc.py] Searching Top 5 relevant memories, user query: 我有一隻叫「麻糬」的柴犬，牠每天早上 6 點就會吵著要出門散步。
+2026-01-20 14:25:14 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-20 14:25:14 INFO [poc.py] Relevant memories for the query '我有一隻叫「麻糬」的柴犬，牠每天早上 6 點就會吵著要出門散步。':
+2026-01-20 14:25:14 INFO [poc.py] - Customer name: Elsa (Score: 0.869496107101)
+2026-01-20 14:25:14 INFO [poc.py] - Located in Taipei (Score: 0.916045606136)
+2026-01-20 14:25:14 INFO [poc.py] - User is allergic to seafood (Score: 0.922545850277)
+2026-01-20 14:25:14 INFO [poc.py] - User wants to integrate AI functionality into their product (Score: 0.934525370598)
+2026-01-20 14:25:14 INFO [poc.py] - At group meals, user usually eats vegetarian food or steak (Score: 0.937099575996)
+2026-01-20 14:25:14 INFO [poc.py] System Prompt:
+You are a helpful AI. Answer the question based on query and memories.
+User memories:
+- Customer name: Elsa
+- Located in Taipei
+- User is allergic to seafood
+- User wants to integrate AI functionality into their product
+- At group meals, user usually eats vegetarian food or steak
+
+2026-01-20 14:25:29 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-20 14:25:29 INFO [poc.py] [Round 4] AI Response:
+聽起來麻糬已經把 6 點當成固定作息了。你可以用幾個方法把「早上吵著出門」變得更可控，甚至把時間慢慢往後挪一點：
+
+1) 先確認需求：是想上廁所還是想活動  
+- 如果一醒來就很急，可能是生理需求；這種比較難硬改。  
+- 如果是習慣/期待（覺得 6 點一定會出門），就有調整空間。
+
+2) 建立「安靜才會出門」的規則（很有效）  
+- 麻糬一吵就立刻出門，等於你在獎勵吵鬧。  
+- 做法：準備出門前必須先安靜（例如連續安靜 30 秒～1 分鐘）才拿牽繩、開門。  
+- 一吵就停下動作、等安靜再繼續。幾天到一兩週通常會看出差異。
+
+3) 把出門時間「循序延後」  
+- 每 2～3 天延後 5～10 分鐘（例如 6:00 → 6:10 → 6:20）。  
+- 延後期間如果牠叫，不要用「立刻出門」結束叫聲；至少等到安靜再出門。
+
+4) 前一晚把需求消耗掉  
+- 晚上增加 10～15 分鐘的散步或嗅聞（嗅聞比純走路更累）。  
+- 睡前最後一次尿尿時間稍微晚一點，也可能減少清晨急著出門。
+
+5) 早上先給「替代任務」再出門  
+- 例如起床先讓牠坐下/趴下、做 3～5 個簡單指令，或給嗅聞墊、藏食遊戲 5 分鐘。  
+- 讓牠學會：醒來不是立刻衝門口，而是先冷靜。
+
+如果你願意，我可以幫你判斷最適合的方案：麻糬幾歲？現在晚上最後一次出門大概幾點？牠是吠叫、哀鳴，還是抓門/跳床把你叫醒？另外你希望把散步時間調到幾點比較理想？
+2026-01-20 14:25:29 INFO [poc.py] Try to add memory for user 'Elsa': 我有一隻叫「麻糬」的柴犬，牠每天早上 6 點就會吵著要出門散步。
+2026-01-20 14:25:30 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-20 14:25:31 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-20 14:25:31 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-20 14:25:31 INFO [main.py] Total existing memories: 7
+2026-01-20 14:25:35 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-20 14:25:35 INFO [main.py] {'id': '0', 'text': 'User is allergic to seafood', 'event': 'NONE'}
+2026-01-20 14:25:35 INFO [main.py] NOOP for Memory.
+2026-01-20 14:25:35 INFO [main.py] {'id': '1', 'text': 'Works as a frontend engineer at a technology company', 'event': 'NONE'}
+2026-01-20 14:25:35 INFO [main.py] NOOP for Memory.
+2026-01-20 14:25:35 INFO [main.py] {'id': '2', 'text': 'Customer name: Elsa', 'event': 'NONE'}
+2026-01-20 14:25:35 INFO [main.py] NOOP for Memory.
+2026-01-20 14:25:35 INFO [main.py] {'id': '3', 'text': 'Located in Taipei', 'event': 'NONE'}
+2026-01-20 14:25:35 INFO [main.py] NOOP for Memory.
+2026-01-20 14:25:35 INFO [main.py] {'id': '4', 'text': 'User recently started learning Python', 'event': 'NONE'}
+2026-01-20 14:25:35 INFO [main.py] NOOP for Memory.
+2026-01-20 14:25:35 INFO [main.py] {'id': '5', 'text': 'User wants to integrate AI functionality into their product', 'event': 'NONE'}
+2026-01-20 14:25:35 INFO [main.py] NOOP for Memory.
+2026-01-20 14:25:35 INFO [main.py] {'id': '6', 'text': 'At group meals, user usually eats vegetarian food or steak', 'event': 'NONE'}
+2026-01-20 14:25:35 INFO [main.py] NOOP for Memory.
+2026-01-20 14:25:35 INFO [main.py] {'id': '7', 'text': 'User has a Shiba Inu named 麻糬', 'event': 'ADD'}
+2026-01-20 14:25:35 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-20 14:25:35 INFO [main.py] {'id': '8', 'text': "User's dog wants to go for a walk every morning at 6:00", 'event': 'ADD'}
+2026-01-20 14:25:35 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-20 14:25:35 INFO [poc.py] Memories operation: 2
+2026-01-20 14:25:35 INFO [poc.py] {'id': '038ad697-07ba-46bc-b60a-dd47ff8d51b2', 'memory': 'User has a Shiba Inu named 麻糬', 'event': 'ADD'}
+2026-01-20 14:25:35 INFO [poc.py] {'id': 'e8715d1b-f8a9-49e5-aafb-1a6600a9faf0', 'memory': "User's dog wants to go for a walk every morning at 6:00", 'event': 'ADD'}
+2026-01-20 14:25:38 INFO [poc.py] ==================================================
+2026-01-20 14:25:38 INFO [poc.py] [Round 5] Human Question:
+其實我最近換工作了，我現在轉職成了後端工程師，主要用 Go 語言。
+2026-01-20 14:25:38 INFO [poc.py] Elsa has 9 existing memories
+2026-01-20 14:25:38 INFO [poc.py] Searching Top 100 relevant memories, user query: 其實我最近換工作了，我現在轉職成了後端工程師，主要用 Go 語言。
+2026-01-20 14:25:39 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-20 14:25:39 INFO [poc.py] Relevant memories for the query '其實我最近換工作了，我現在轉職成了後端工程師，主要用 Go 語言。':
+2026-01-20 14:25:39 INFO [poc.py] - Works as a frontend engineer at a technology company (Score: 0.530478298664)
+2026-01-20 14:25:39 INFO [poc.py] - User recently started learning Python (Score: 0.712807774544)
+2026-01-20 14:25:39 INFO [poc.py] - User has a Shiba Inu named 麻糬 (Score: 0.785517454147)
+2026-01-20 14:25:39 INFO [poc.py] - User wants to integrate AI functionality into their product (Score: 0.846095979214)
+2026-01-20 14:25:39 INFO [poc.py] - Located in Taipei (Score: 0.846963107586)
+2026-01-20 14:25:39 INFO [poc.py] - At group meals, user usually eats vegetarian food or steak (Score: 0.879817187786)
+2026-01-20 14:25:39 INFO [poc.py] - Customer name: Elsa (Score: 0.897627949715)
+2026-01-20 14:25:39 INFO [poc.py] - User's dog wants to go for a walk every morning at 6:00 (Score: 0.916377425194)
+2026-01-20 14:25:39 INFO [poc.py] - User is allergic to seafood (Score: 0.916674137115)
+2026-01-20 14:25:39 INFO [poc.py] Searching Top 5 relevant memories, user query: 其實我最近換工作了，我現在轉職成了後端工程師，主要用 Go 語言。
+2026-01-20 14:25:39 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-20 14:25:39 INFO [poc.py] Relevant memories for the query '其實我最近換工作了，我現在轉職成了後端工程師，主要用 Go 語言。':
+2026-01-20 14:25:39 INFO [poc.py] - Works as a frontend engineer at a technology company (Score: 0.530059099197)
+2026-01-20 14:25:39 INFO [poc.py] - User recently started learning Python (Score: 0.712580740452)
+2026-01-20 14:25:39 INFO [poc.py] - User has a Shiba Inu named 麻糬 (Score: 0.785735368729)
+2026-01-20 14:25:39 INFO [poc.py] - User wants to integrate AI functionality into their product (Score: 0.8458288908)
+2026-01-20 14:25:39 INFO [poc.py] - Located in Taipei (Score: 0.847439289093)
+2026-01-20 14:25:39 INFO [poc.py] System Prompt:
+You are a helpful AI. Answer the question based on query and memories.
+User memories:
+- Works as a frontend engineer at a technology company
+- User recently started learning Python
+- User has a Shiba Inu named 麻糬
+- User wants to integrate AI functionality into their product
+- Located in Taipei
+
+2026-01-20 14:25:45 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-20 14:25:45 INFO [poc.py] [Round 5] AI Response:
+了解，我會把你的背景更新成：你現在是後端工程師，主要使用 Go（在台北）。
+
+如果你願意多講一點，我也可以更精準地在之後的回答中對焦：
+1) 你後端主要做哪一塊：API、微服務、資料庫、訊息佇列、或基礎設施？  
+2) Go 的技術棧：Gin/Fiber/Echo、gRPC、SQL/ORM（GORM/sqlx）、Redis/Kafka/NATS？  
+3) 你之前前端的經驗，現在有沒有在做 full-stack 或跟前端協作的部分？  
+4) 你想把 AI 功能整合到產品的目標，有因為轉後端而改變嗎（例如更偏向推理服務、向量資料庫、RAG、或模型部署）？
+
+你也可以直接說你目前最卡的一件事（例如 Go 的並發、測試、專案結構、效能調校、或部署），我可以用 Go 的角度一起拆解。
+2026-01-20 14:25:45 INFO [poc.py] Try to add memory for user 'Elsa': 其實我最近換工作了，我現在轉職成了後端工程師，主要用 Go 語言。
+2026-01-20 14:25:47 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-20 14:25:47 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-20 14:25:48 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-20 14:25:48 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-20 14:25:48 INFO [main.py] Total existing memories: 7
+2026-01-20 14:25:53 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-20 14:25:53 INFO [main.py] {'id': '0', 'text': 'Now works as a backend engineer at a technology company', 'event': 'UPDATE', 'old_memory': 'Works as a frontend engineer at a technology company'}
+2026-01-20 14:25:53 INFO [main.py] Updating memory with data='Now works as a backend engineer at a technology company'
+2026-01-20 14:25:53 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-20 14:25:53 INFO [main.py] Updating memory with ID memory_id='2ff2d611-87b8-4e9e-810b-0164237b473b' with data='Now works as a backend engineer at a technology company'
+2026-01-20 14:25:53 INFO [main.py] {'id': '1', 'text': 'User recently started learning Python', 'event': 'NONE'}
+2026-01-20 14:25:53 INFO [main.py] NOOP for Memory.
+2026-01-20 14:25:53 INFO [main.py] {'id': '2', 'text': 'Customer name: Elsa', 'event': 'NONE'}
+2026-01-20 14:25:53 INFO [main.py] NOOP for Memory.
+2026-01-20 14:25:53 INFO [main.py] {'id': '3', 'text': 'User has a Shiba Inu named 麻糬', 'event': 'NONE'}
+2026-01-20 14:25:53 INFO [main.py] NOOP for Memory.
+2026-01-20 14:25:53 INFO [main.py] {'id': '4', 'text': 'User is allergic to seafood', 'event': 'NONE'}
+2026-01-20 14:25:53 INFO [main.py] NOOP for Memory.
+2026-01-20 14:25:53 INFO [main.py] {'id': '5', 'text': 'User wants to integrate AI functionality into their product', 'event': 'NONE'}
+2026-01-20 14:25:53 INFO [main.py] NOOP for Memory.
+2026-01-20 14:25:53 INFO [main.py] {'id': '6', 'text': 'At group meals, user usually eats vegetarian food or steak', 'event': 'NONE'}
+2026-01-20 14:25:53 INFO [main.py] NOOP for Memory.
+2026-01-20 14:25:53 INFO [main.py] {'id': '7', 'text': 'User recently changed jobs', 'event': 'ADD'}
+2026-01-20 14:25:54 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-20 14:25:54 INFO [main.py] {'id': '8', 'text': 'User primarily uses Go language', 'event': 'ADD'}
+2026-01-20 14:25:54 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-20 14:25:54 INFO [poc.py] Memories operation: 3
+2026-01-20 14:25:54 INFO [poc.py] {'id': '2ff2d611-87b8-4e9e-810b-0164237b473b', 'memory': 'Now works as a backend engineer at a technology company', 'event': 'UPDATE', 'previous_memory': 'Works as a frontend engineer at a technology company'}
+2026-01-20 14:25:54 INFO [poc.py] {'id': 'df152447-2a64-4770-999b-e0b6053879a2', 'memory': 'User recently changed jobs', 'event': 'ADD'}
+2026-01-20 14:25:54 INFO [poc.py] {'id': 'f33d9aa0-b260-458c-a347-178baf11cde9', 'memory': 'User primarily uses Go language', 'event': 'ADD'}
+2026-01-20 14:25:57 INFO [poc.py] ==================================================
+2026-01-20 14:25:57 INFO [poc.py] [Round 6] Human Question:
+下週我要去日本東京出差，我想在那邊找幾間好吃的素食餐廳。
+2026-01-20 14:25:57 INFO [poc.py] Elsa has 11 existing memories
+2026-01-20 14:25:57 INFO [poc.py] Searching Top 100 relevant memories, user query: 下週我要去日本東京出差，我想在那邊找幾間好吃的素食餐廳。
+2026-01-20 14:25:57 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-20 14:25:57 INFO [poc.py] Relevant memories for the query '下週我要去日本東京出差，我想在那邊找幾間好吃的素食餐廳。':
+2026-01-20 14:25:57 INFO [poc.py] - At group meals, user usually eats vegetarian food or steak (Score: 0.666948139668)
+2026-01-20 14:25:57 INFO [poc.py] - Located in Taipei (Score: 0.757416725159)
+2026-01-20 14:25:57 INFO [poc.py] - User has a Shiba Inu named 麻糬 (Score: 0.801033854485)
+2026-01-20 14:25:57 INFO [poc.py] - User is allergic to seafood (Score: 0.851243019104)
+2026-01-20 14:25:57 INFO [poc.py] - User recently changed jobs (Score: 0.896285235882)
+2026-01-20 14:25:57 INFO [poc.py] - User's dog wants to go for a walk every morning at 6:00 (Score: 0.899510383606)
+2026-01-20 14:25:57 INFO [poc.py] - Customer name: Elsa (Score: 0.935567677021)
+2026-01-20 14:25:57 INFO [poc.py] - User recently started learning Python (Score: 0.956665635109)
+2026-01-20 14:25:57 INFO [poc.py] - Now works as a backend engineer at a technology company (Score: 0.963096559048)
+2026-01-20 14:25:57 INFO [poc.py] - User wants to integrate AI functionality into their product (Score: 0.981956779957)
+2026-01-20 14:25:57 INFO [poc.py] - User primarily uses Go language (Score: 0.982964754105)
+2026-01-20 14:25:57 INFO [poc.py] Searching Top 5 relevant memories, user query: 下週我要去日本東京出差，我想在那邊找幾間好吃的素食餐廳。
+2026-01-20 14:25:57 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-20 14:25:57 INFO [poc.py] Relevant memories for the query '下週我要去日本東京出差，我想在那邊找幾間好吃的素食餐廳。':
+2026-01-20 14:25:57 INFO [poc.py] - At group meals, user usually eats vegetarian food or steak (Score: 0.666948139668)
+2026-01-20 14:25:57 INFO [poc.py] - Located in Taipei (Score: 0.757416725159)
+2026-01-20 14:25:57 INFO [poc.py] - User has a Shiba Inu named 麻糬 (Score: 0.801033854485)
+2026-01-20 14:25:57 INFO [poc.py] - User is allergic to seafood (Score: 0.851243019104)
+2026-01-20 14:25:57 INFO [poc.py] - User recently changed jobs (Score: 0.896285235882)
+2026-01-20 14:25:57 INFO [poc.py] System Prompt:
+You are a helpful AI. Answer the question based on query and memories.
+User memories:
+- At group meals, user usually eats vegetarian food or steak
+- Located in Taipei
+- User has a Shiba Inu named 麻糬
+- User is allergic to seafood
+- User recently changed jobs
+
+2026-01-20 14:26:16 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-20 14:26:16 INFO [poc.py] [Round 6] AI Response:
+在東京找素食其實很方便，我先按「全素 / 蛋奶素友善」各給你幾間口碑很穩、分店多或地點方便的選擇；另外你對海鮮過敏，去一般餐廳也要特別注意「魚介高湯（だし）」這點（很多看起來是素的其實用柴魚高湯）。
+
+## 推薦素食餐廳（東京）
+### 1) T’s たんたん（全素拉麵）
+- 特色：純素擔擔麵、餃子、湯頭濃但不靠魚介
+- 優點：常見於車站周邊，出差移動很方便  
+- 關鍵字：ヴィーガン / Vegan ramen
+
+### 2) Ain Soph 系列（偏蛋奶素/也有不少全素）
+- 特色：漢堡、鬆餅、甜點、早午餐，口味更「西式」  
+- 適合：想吃得精緻、也方便跟同事聚餐
+
+### 3) Nagi Shokudo（偏全素）
+- 特色：日式定食、小菜、咖哩等，吃起來很「家常但好吃」
+- 注意：店可能不大，尖峰時間建議避開或早點到
+
+### 4) Mr. Farmer（素食/純素選項多）
+- 特色：沙拉、蔬食碗、植物蛋白選擇多
+- 適合：想吃得清爽、控熱量或需要快速用餐
+
+### 5) Sorano（植物性料理取向）
+- 特色：蔬菜料理做得細緻，有點「小館/餐酒」氛圍
+- 適合：想找一間比較有質感、適合約客戶或同事的
+
+---
+
+## 你海鮮過敏：在日本點餐要特別注意的雷
+即使點「野菜」「豆腐」也可能含魚介：
+- だし（高湯）常用：かつお（柴魚）、煮干し（小魚乾）、あさり（蛤蜊）等  
+- 醬油/麵汁也可能含魚介萃取
+
+你可以直接用這句日文詢問（很實用）：
+- 「魚介アレルギーです。だし（かつお・煮干し）も食べられません。魚介不使用のメニューはありますか？」  
+（我對魚介過敏，高湯（柴魚/小魚乾）也不行。有沒有不使用魚介的餐點？）
+
+---
+
+## 我可以幫你縮到「離你住/開會地點最近」的清單
+你這次主要會在東京哪幾區活動？例如：新宿、渋谷、品川、東京站、銀座、六本木、秋葉原等。  
+另外你是「全素」還是「蛋奶素也可以」？我就能把餐廳精準到 5–8 間、附上交通方式/是否需預約與必點。
+2026-01-20 14:26:16 INFO [poc.py] Try to add memory for user 'Elsa': 下週我要去日本東京出差，我想在那邊找幾間好吃的素食餐廳。
+2026-01-20 14:26:17 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-20 14:26:17 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-20 14:26:18 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-20 14:26:18 INFO [main.py] Total existing memories: 6
+2026-01-20 14:26:24 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-20 14:26:24 INFO [main.py] {'id': '0', 'text': 'Located in Taipei', 'event': 'NONE'}
+2026-01-20 14:26:24 INFO [main.py] NOOP for Memory.
+2026-01-20 14:26:24 INFO [main.py] {'id': '1', 'text': 'User recently changed jobs', 'event': 'NONE'}
+2026-01-20 14:26:24 INFO [main.py] NOOP for Memory.
+2026-01-20 14:26:24 INFO [main.py] {'id': '2', 'text': 'User has a Shiba Inu named 麻糬', 'event': 'NONE'}
+2026-01-20 14:26:24 INFO [main.py] NOOP for Memory.
+2026-01-20 14:26:24 INFO [main.py] {'id': '3', 'text': "User's dog wants to go for a walk every morning at 6:00", 'event': 'NONE'}
+2026-01-20 14:26:24 INFO [main.py] NOOP for Memory.
+2026-01-20 14:26:24 INFO [main.py] {'id': '4', 'text': 'At group meals, user usually eats vegetarian food or steak', 'event': 'NONE'}
+2026-01-20 14:26:24 INFO [main.py] NOOP for Memory.
+2026-01-20 14:26:24 INFO [main.py] {'id': '5', 'text': 'User is allergic to seafood', 'event': 'NONE'}
+2026-01-20 14:26:24 INFO [main.py] NOOP for Memory.
+2026-01-20 14:26:24 INFO [main.py] {'id': '6', 'text': 'User will go on a business trip to Tokyo, Japan next week', 'event': 'ADD'}
+2026-01-20 14:26:24 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-20 14:26:24 INFO [main.py] {'id': '7', 'text': 'User wants to find good vegetarian restaurants in Tokyo', 'event': 'ADD'}
+2026-01-20 14:26:25 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-20 14:26:25 INFO [poc.py] Memories operation: 2
+2026-01-20 14:26:25 INFO [poc.py] {'id': 'a45529e0-0ef1-48a7-a08b-c8ffcb46beba', 'memory': 'User will go on a business trip to Tokyo, Japan next week', 'event': 'ADD'}
+2026-01-20 14:26:25 INFO [poc.py] {'id': 'ad249c03-51cc-4180-85e1-b94160d319c6', 'memory': 'User wants to find good vegetarian restaurants in Tokyo', 'event': 'ADD'}
+2026-01-20 14:26:28 INFO [poc.py] ==================================================
+2026-01-20 14:26:28 INFO [poc.py] [Round 7] Human Question:
+最近「麻糬」變得很懶，現在都要到 8 點才肯起床，真拿牠沒辦法。
+2026-01-20 14:26:28 INFO [poc.py] Elsa has 13 existing memories
+2026-01-20 14:26:28 INFO [poc.py] Searching Top 100 relevant memories, user query: 最近「麻糬」變得很懶，現在都要到 8 點才肯起床，真拿牠沒辦法。
+2026-01-20 14:26:28 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-20 14:26:28 INFO [poc.py] Relevant memories for the query '最近「麻糬」變得很懶，現在都要到 8 點才肯起床，真拿牠沒辦法。':
+2026-01-20 14:26:28 INFO [poc.py] - User has a Shiba Inu named 麻糬 (Score: 0.574100494385)
+2026-01-20 14:26:28 INFO [poc.py] - User's dog wants to go for a walk every morning at 6:00 (Score: 0.607276916504)
+2026-01-20 14:26:28 INFO [poc.py] - At group meals, user usually eats vegetarian food or steak (Score: 0.869935691357)
+2026-01-20 14:26:28 INFO [poc.py] - User is allergic to seafood (Score: 0.871573805809)
+2026-01-20 14:26:28 INFO [poc.py] - User recently changed jobs (Score: 0.873631060123)
+2026-01-20 14:26:28 INFO [poc.py] - User will go on a business trip to Tokyo, Japan next week (Score: 0.899438023567)
+2026-01-20 14:26:28 INFO [poc.py] - User wants to find good vegetarian restaurants in Tokyo (Score: 0.906393647194)
+2026-01-20 14:26:28 INFO [poc.py] - Customer name: Elsa (Score: 0.90744972229)
+2026-01-20 14:26:28 INFO [poc.py] - User recently started learning Python (Score: 0.909347057343)
+2026-01-20 14:26:28 INFO [poc.py] - User primarily uses Go language (Score: 0.911304831505)
+2026-01-20 14:26:28 INFO [poc.py] - Located in Taipei (Score: 0.942507863045)
+2026-01-20 14:26:28 INFO [poc.py] - Now works as a backend engineer at a technology company (Score: 0.94437366724)
+2026-01-20 14:26:28 INFO [poc.py] - User wants to integrate AI functionality into their product (Score: 0.980575323105)
+2026-01-20 14:26:28 INFO [poc.py] Searching Top 5 relevant memories, user query: 最近「麻糬」變得很懶，現在都要到 8 點才肯起床，真拿牠沒辦法。
+2026-01-20 14:26:29 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-20 14:26:29 INFO [poc.py] Relevant memories for the query '最近「麻糬」變得很懶，現在都要到 8 點才肯起床，真拿牠沒辦法。':
+2026-01-20 14:26:29 INFO [poc.py] - User has a Shiba Inu named 麻糬 (Score: 0.574098408222)
+2026-01-20 14:26:29 INFO [poc.py] - User's dog wants to go for a walk every morning at 6:00 (Score: 0.607268035412)
+2026-01-20 14:26:29 INFO [poc.py] - At group meals, user usually eats vegetarian food or steak (Score: 0.869923114777)
+2026-01-20 14:26:29 INFO [poc.py] - User is allergic to seafood (Score: 0.871600151062)
+2026-01-20 14:26:29 INFO [poc.py] - User recently changed jobs (Score: 0.873680531979)
+2026-01-20 14:26:29 INFO [poc.py] System Prompt:
+You are a helpful AI. Answer the question based on query and memories.
+User memories:
+- User has a Shiba Inu named 麻糬
+- User's dog wants to go for a walk every morning at 6:00
+- At group meals, user usually eats vegetarian food or steak
+- User is allergic to seafood
+- User recently changed jobs
+
+2026-01-20 14:26:40 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-20 14:26:40 INFO [poc.py] [Round 7] AI Response:
+聽起來「麻糬」最近把作息整個往後延了；如果牠之前都 6:00 就想出門，現在變成 8:00 才起床，通常可能是幾種情況：
+
+- **天氣/溫度變化**：變冷或下雨時，有些狗會更不想早起出門。  
+- **作息被強化了**：如果牠晚起也能照樣立刻散步、吃到早餐，牠就會覺得「晚起也沒差」。  
+- **活動量或刺激變少**：前一天運動不夠、白天比較無聊，反而容易睡得更散、更晚起。  
+- **身體狀況**：如果同時出現精神比較差、食慾變化、走路不太想走、咳嗽或拉肚子等，就要留意可能不只是「懶」。
+
+你可以試試看幾個溫和的調整方式（不需要一下子逼回 6 點）：
+1. **循序提早**：每天提早 10–15 分鐘叫起床，慢慢拉回想要的時間。  
+2. **固定早晨流程**：起床→上廁所→散步→回家吃早餐，流程固定，讓牠知道早起有好事但不會拖很久。  
+3. **把獎勵放在「早起」**：例如只有在你希望的時間起來，才有特別喜歡的零食或更想去的路線。  
+4. **晚上增加一點活動量**：晚餐後多 10–20 分鐘散步/嗅聞遊戲，通常能讓隔天精神更穩定。  
+
+想幫你更精準判斷：麻糬是「醒著但賴床不想動」，還是「真的睡死叫不醒」？另外最近天氣變冷、下雨，或你換工作後你們的作息也有變嗎？
+2026-01-20 14:26:40 INFO [poc.py] Try to add memory for user 'Elsa': 最近「麻糬」變得很懶，現在都要到 8 點才肯起床，真拿牠沒辦法。
+2026-01-20 14:26:42 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-20 14:26:42 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-20 14:26:42 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-20 14:26:42 INFO [main.py] Total existing memories: 8
+2026-01-20 14:26:46 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-20 14:26:46 INFO [main.py] {'id': '0', 'text': 'User has a Shiba Inu named 麻糬', 'event': 'NONE'}
+2026-01-20 14:26:46 INFO [main.py] NOOP for Memory.
+2026-01-20 14:26:46 INFO [main.py] {'id': '1', 'text': "User's dog wants to go for a walk every morning at 6:00", 'event': 'NONE'}
+2026-01-20 14:26:46 INFO [main.py] NOOP for Memory.
+2026-01-20 14:26:46 INFO [main.py] {'id': '2', 'text': 'Customer name: Elsa', 'event': 'NONE'}
+2026-01-20 14:26:46 INFO [main.py] NOOP for Memory.
+2026-01-20 14:26:46 INFO [main.py] {'id': '3', 'text': 'User is allergic to seafood', 'event': 'NONE'}
+2026-01-20 14:26:46 INFO [main.py] NOOP for Memory.
+2026-01-20 14:26:46 INFO [main.py] {'id': '4', 'text': 'User recently started learning Python', 'event': 'NONE'}
+2026-01-20 14:26:46 INFO [main.py] NOOP for Memory.
+2026-01-20 14:26:46 INFO [main.py] {'id': '5', 'text': 'User will go on a business trip to Tokyo, Japan next week', 'event': 'NONE'}
+2026-01-20 14:26:46 INFO [main.py] NOOP for Memory.
+2026-01-20 14:26:46 INFO [main.py] {'id': '6', 'text': 'Now works as a backend engineer at a technology company', 'event': 'NONE'}
+2026-01-20 14:26:46 INFO [main.py] NOOP for Memory.
+2026-01-20 14:26:46 INFO [main.py] {'id': '7', 'text': 'At group meals, user usually eats vegetarian food or steak', 'event': 'NONE'}
+2026-01-20 14:26:46 INFO [main.py] NOOP for Memory.
+2026-01-20 14:26:46 INFO [main.py] {'id': '8', 'text': 'Pet named 麻糬 has been very lazy recently', 'event': 'ADD'}
+2026-01-20 14:26:46 INFO [main.py] {'id': '9', 'text': "Pet 麻糬 now wakes up at 8 o'clock", 'event': 'ADD'}
+2026-01-20 14:26:46 INFO [poc.py] Memories operation: 2
+2026-01-20 14:26:46 INFO [poc.py] {'id': '12c99905-c135-445c-8075-00094923b185', 'memory': 'Pet named 麻糬 has been very lazy recently', 'event': 'ADD'}
+2026-01-20 14:26:46 INFO [poc.py] {'id': 'c979d31f-f8a0-47ab-a1fd-8f9ec0116e4a', 'memory': "Pet 麻糬 now wakes up at 8 o'clock", 'event': 'ADD'}
+2026-01-20 14:26:49 INFO [poc.py] ==================================================
+2026-01-20 14:26:49 INFO [poc.py] [Round 8] Human Question:
+我正在考慮把我的筆電換成 Mac，因為 Go 的開發環境好像比較方便。
+2026-01-20 14:26:49 INFO [poc.py] Elsa has 15 existing memories
+2026-01-20 14:26:49 INFO [poc.py] Searching Top 100 relevant memories, user query: 我正在考慮把我的筆電換成 Mac，因為 Go 的開發環境好像比較方便。
+2026-01-20 14:26:49 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-20 14:26:49 INFO [poc.py] Relevant memories for the query '我正在考慮把我的筆電換成 Mac，因為 Go 的開發環境好像比較方便。':
+2026-01-20 14:26:49 INFO [poc.py] - User primarily uses Go language (Score: 0.621526479721)
+2026-01-20 14:26:49 INFO [poc.py] - User wants to integrate AI functionality into their product (Score: 0.811668157578)
+2026-01-20 14:26:49 INFO [poc.py] - Now works as a backend engineer at a technology company (Score: 0.813979923725)
+2026-01-20 14:26:49 INFO [poc.py] - User recently started learning Python (Score: 0.821702778339)
+2026-01-20 14:26:49 INFO [poc.py] - Located in Taipei (Score: 0.841184616089)
+2026-01-20 14:26:49 INFO [poc.py] - Pet named 麻糬 has been very lazy recently (Score: 0.845780074596)
+2026-01-20 14:26:49 INFO [poc.py] - User has a Shiba Inu named 麻糬 (Score: 0.851213276386)
+2026-01-20 14:26:49 INFO [poc.py] - User will go on a business trip to Tokyo, Japan next week (Score: 0.864614129066)
+2026-01-20 14:26:49 INFO [poc.py] - Pet 麻糬 now wakes up at 8 o'clock (Score: 0.867280006409)
+2026-01-20 14:26:49 INFO [poc.py] - User wants to find good vegetarian restaurants in Tokyo (Score: 0.902580976486)
+2026-01-20 14:26:49 INFO [poc.py] - User's dog wants to go for a walk every morning at 6:00 (Score: 0.913256704807)
+2026-01-20 14:26:49 INFO [poc.py] - At group meals, user usually eats vegetarian food or steak (Score: 0.915715992451)
+2026-01-20 14:26:49 INFO [poc.py] - User recently changed jobs (Score: 0.934049665928)
+2026-01-20 14:26:49 INFO [poc.py] - Customer name: Elsa (Score: 0.954846262932)
+2026-01-20 14:26:49 INFO [poc.py] - User is allergic to seafood (Score: 0.972092628479)
+2026-01-20 14:26:49 INFO [poc.py] Searching Top 5 relevant memories, user query: 我正在考慮把我的筆電換成 Mac，因為 Go 的開發環境好像比較方便。
+2026-01-20 14:26:49 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-20 14:26:49 INFO [poc.py] Relevant memories for the query '我正在考慮把我的筆電換成 Mac，因為 Go 的開發環境好像比較方便。':
+2026-01-20 14:26:49 INFO [poc.py] - User primarily uses Go language (Score: 0.621526479721)
+2026-01-20 14:26:49 INFO [poc.py] - User wants to integrate AI functionality into their product (Score: 0.811668157578)
+2026-01-20 14:26:49 INFO [poc.py] - Now works as a backend engineer at a technology company (Score: 0.813979923725)
+2026-01-20 14:26:49 INFO [poc.py] - User recently started learning Python (Score: 0.821702778339)
+2026-01-20 14:26:49 INFO [poc.py] - Located in Taipei (Score: 0.841184616089)
+2026-01-20 14:26:49 INFO [poc.py] System Prompt:
+You are a helpful AI. Answer the question based on query and memories.
+User memories:
+- User primarily uses Go language
+- User wants to integrate AI functionality into their product
+- Now works as a backend engineer at a technology company
+- User recently started learning Python
+- Located in Taipei
+
+2026-01-20 14:27:14 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-20 14:27:14 INFO [poc.py] [Round 8] AI Response:
+換 Mac 對 Go 開發確實通常會更順手，尤其是你如果平常有用到 Docker、CLI 工具鏈、或需要接近 Linux 的環境。不過要不要換，建議你從「你現在的工作流」跟「硬體/相容性」兩條線來評估：
+
+## 1) 為什麼 Mac 對 Go 開發常見優勢
+- **類 Unix 環境**：shell、檔案權限、常用工具（ssh、curl、make 等）跟 Linux 很接近，很多 Go 專案的腳本/Makefile 比較少踩雷。
+- **套件與工具安裝容易**：Homebrew 裝 Go、gofumpt、golangci-lint、protoc、kubectl、terraform 這類工具很方便。
+- **Docker / 容器體驗通常較一致**：尤其團隊若多是 Linux/Mac，環境差異相對小（但 Docker Desktop 在 Mac 仍有虛擬化成本，見下面注意事項）。
+- **IDE 支援成熟**：GoLand、VS Code（gopls）在 macOS 體驗普遍不差。
+
+## 2) 需要注意的坑（避免買了才後悔）
+- **Apple Silicon（M1/M2/M3）相容性**：大多數 Go 工具沒問題，但若你依賴少見的二進位工具、老舊 C library、或特定資料庫/SDK（尤其只有 x86_64 的），可能需要 Rosetta 或改用替代方案。
+- **Docker 效能/檔案 I/O**：Mac 上跑容器是透過虛擬化，不等於原生 Linux。多容器、重 I/O（例如大型 monorepo、頻繁 mount）時，效能可能不如同價位的 Linux 桌機/筆電。
+- **公司內部工具/資安軟體**：有些 VPN、端點管控、憑證工具對 macOS/晶片架構有要求。換機前最好先確認 IT 支援範圍。
+- **鍵盤/快捷鍵習慣與外接螢幕**：如果你長期 Windows 熱鍵肌肉記憶，前一兩週會有切換成本。
+
+## 3) 我會怎麼建議你選（給後端/Go 開發情境）
+- 如果你日常是 **Go + Docker + k8s/雲端工具鏈**、並且常需要本機模擬接近 production 的環境：**Mac（Apple Silicon）通常是好選擇**。
+- 如果你大量跑 **重負載容器、需要很多 RAM、或偏向本機長時間跑多服務**：可以考慮 **Mac 但把記憶體加大**，或乾脆 **Linux 筆電**也很香（成本效益高）。
+- 如果你主要痛點只是「Windows 上環境麻煩」：你也可以先試試 **WSL2 + Ubuntu**，很多 Go 開發已經能非常接近 Mac/Linux 的順手程度，成本最低。
+
+## 4) 你如果要買 Mac，實用的規格建議
+- **CPU**：M2/M3 以上都夠 Go 開發用（編譯很快）。
+- **RAM**：建議 **至少 16GB**；如果你常開很多容器/IDE/瀏覽器分頁，考慮 **24GB 或 32GB**更舒適。
+- **SSD**：建議 **512GB 起跳**（Docker image、module cache、專案、多分支都很吃空間）。
+
+---
+
+如果你願意，我可以用更精準的方式幫你判斷值不值得換：  
+1) 你現在用的是 Windows 還是 Linux？主要痛點是什麼（安裝、權限、Docker、VPN、效能）？  
+2) 你日常會同時跑多少個 Docker container/服務？  
+3) 公司對作業系統或資安工具有沒有硬性規定？  
+4) 預算範圍大概多少、偏好 MacBook Air 還是 Pro？
+2026-01-20 14:27:14 INFO [poc.py] Try to add memory for user 'Elsa': 我正在考慮把我的筆電換成 Mac，因為 Go 的開發環境好像比較方便。
+2026-01-20 14:27:15 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-20 14:27:15 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-20 14:27:16 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-20 14:27:16 INFO [main.py] Total existing memories: 6
+2026-01-20 14:27:18 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-20 14:27:18 INFO [main.py] {'id': '0', 'text': 'User recently started learning Python', 'event': 'NONE'}
+2026-01-20 14:27:18 INFO [main.py] NOOP for Memory.
+2026-01-20 14:27:18 INFO [main.py] {'id': '1', 'text': 'User wants to integrate AI functionality into their product', 'event': 'NONE'}
+2026-01-20 14:27:18 INFO [main.py] NOOP for Memory.
+2026-01-20 14:27:18 INFO [main.py] {'id': '2', 'text': 'User recently changed jobs', 'event': 'NONE'}
+2026-01-20 14:27:18 INFO [main.py] NOOP for Memory.
+2026-01-20 14:27:18 INFO [main.py] {'id': '3', 'text': 'Now works as a backend engineer at a technology company', 'event': 'NONE'}
+2026-01-20 14:27:18 INFO [main.py] NOOP for Memory.
+2026-01-20 14:27:18 INFO [main.py] {'id': '4', 'text': 'User primarily uses Go language', 'event': 'NONE'}
+2026-01-20 14:27:18 INFO [main.py] NOOP for Memory.
+2026-01-20 14:27:18 INFO [main.py] {'id': '5', 'text': 'User has a Shiba Inu named 麻糬', 'event': 'NONE'}
+2026-01-20 14:27:18 INFO [main.py] NOOP for Memory.
+2026-01-20 14:27:18 INFO [main.py] {'id': '6', 'text': 'User is considering switching their laptop to a Mac because the Go development environment seems more convenient on Mac', 'event': 'ADD'}
+2026-01-20 14:27:18 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-20 14:27:18 INFO [poc.py] Memories operation: 1
+2026-01-20 14:27:18 INFO [poc.py] {'id': '66078ce7-6783-401e-be0b-1f953fd35622', 'memory': 'User is considering switching their laptop to a Mac because the Go development environment seems more convenient on Mac', 'event': 'ADD'}
+2026-01-20 14:27:21 INFO [poc.py] ==================================================
+2026-01-20 14:27:21 INFO [poc.py] [Round 9] Human Question:
+我發現我上次說錯了，我不是對海鮮過敏，我是對「蝦蟹類」過敏，魚肉是可以吃的
+2026-01-20 14:27:21 INFO [poc.py] Elsa has 16 existing memories
+2026-01-20 14:27:21 INFO [poc.py] Searching Top 100 relevant memories, user query: 我發現我上次說錯了，我不是對海鮮過敏，我是對「蝦蟹類」過敏，魚肉是可以吃的
+2026-01-20 14:27:22 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-20 14:27:22 INFO [poc.py] Relevant memories for the query '我發現我上次說錯了，我不是對海鮮過敏，我是對「蝦蟹類」過敏，魚肉是可以吃的':
+2026-01-20 14:27:22 INFO [poc.py] - User is allergic to seafood (Score: 0.498566091061)
+2026-01-20 14:27:22 INFO [poc.py] - At group meals, user usually eats vegetarian food or steak (Score: 0.754107534885)
+2026-01-20 14:27:22 INFO [poc.py] - User has a Shiba Inu named 麻糬 (Score: 0.787071764469)
+2026-01-20 14:27:22 INFO [poc.py] - Pet named 麻糬 has been very lazy recently (Score: 0.813247084618)
+2026-01-20 14:27:22 INFO [poc.py] - Pet 麻糬 now wakes up at 8 o'clock (Score: 0.814453482628)
+2026-01-20 14:27:22 INFO [poc.py] - User wants to find good vegetarian restaurants in Tokyo (Score: 0.852038800716)
+2026-01-20 14:27:22 INFO [poc.py] - User will go on a business trip to Tokyo, Japan next week (Score: 0.910322487354)
+2026-01-20 14:27:22 INFO [poc.py] - Now works as a backend engineer at a technology company (Score: 0.914672911167)
+2026-01-20 14:27:22 INFO [poc.py] - User recently changed jobs (Score: 0.920997798443)
+2026-01-20 14:27:22 INFO [poc.py] - Customer name: Elsa (Score: 0.922886312008)
+2026-01-20 14:27:22 INFO [poc.py] - Located in Taipei (Score: 0.925750732422)
+2026-01-20 14:27:22 INFO [poc.py] - User recently started learning Python (Score: 0.92840719223)
+2026-01-20 14:27:22 INFO [poc.py] - User primarily uses Go language (Score: 0.944094181061)
+2026-01-20 14:27:22 INFO [poc.py] - User is considering switching their laptop to a Mac because the Go development environment seems more convenient on Mac (Score: 0.946468412876)
+2026-01-20 14:27:22 INFO [poc.py] - User's dog wants to go for a walk every morning at 6:00 (Score: 0.990580737591)
+2026-01-20 14:27:22 INFO [poc.py] - User wants to integrate AI functionality into their product (Score: 1.01936197281)
+2026-01-20 14:27:22 INFO [poc.py] Searching Top 5 relevant memories, user query: 我發現我上次說錯了，我不是對海鮮過敏，我是對「蝦蟹類」過敏，魚肉是可以吃的
+2026-01-20 14:27:22 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-20 14:27:22 INFO [poc.py] Relevant memories for the query '我發現我上次說錯了，我不是對海鮮過敏，我是對「蝦蟹類」過敏，魚肉是可以吃的':
+2026-01-20 14:27:22 INFO [poc.py] - User is allergic to seafood (Score: 0.498533010483)
+2026-01-20 14:27:22 INFO [poc.py] - At group meals, user usually eats vegetarian food or steak (Score: 0.753892719746)
+2026-01-20 14:27:22 INFO [poc.py] - User has a Shiba Inu named 麻糬 (Score: 0.787001132965)
+2026-01-20 14:27:22 INFO [poc.py] - Pet named 麻糬 has been very lazy recently (Score: 0.813183486462)
+2026-01-20 14:27:22 INFO [poc.py] - Pet 麻糬 now wakes up at 8 o'clock (Score: 0.814431428909)
+2026-01-20 14:27:22 INFO [poc.py] System Prompt:
+You are a helpful AI. Answer the question based on query and memories.
+User memories:
+- User is allergic to seafood
+- At group meals, user usually eats vegetarian food or steak
+- User has a Shiba Inu named 麻糬
+- Pet named 麻糬 has been very lazy recently
+- Pet 麻糬 now wakes up at 8 o'clock
+
+2026-01-20 14:27:26 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-20 14:27:26 INFO [poc.py] [Round 9] AI Response:
+了解，我幫你把記錄更正為：
+
+- 你不是對所有海鮮過敏  
+- 你是對「蝦、蟹等甲殼類」過敏  
+- 魚類（魚肉）你是可以吃的
+
+之後如果你問到聚餐/點餐建議，我會以「避開蝦蟹類、但可吃魚」來推薦。若你也會對蚌、蛤、牡蠣這類「貝類」不適，跟我說一下，我也可以一併記住。
+2026-01-20 14:27:26 INFO [poc.py] Try to add memory for user 'Elsa': 我發現我上次說錯了，我不是對海鮮過敏，我是對「蝦蟹類」過敏，魚肉是可以吃的
+2026-01-20 14:27:27 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-20 14:27:27 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-20 14:27:28 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-20 14:27:28 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-20 14:27:28 INFO [main.py] Total existing memories: 7
+2026-01-20 14:27:31 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-20 14:27:31 INFO [main.py] {'id': '0', 'text': 'User is not allergic to seafood in general; allergic to shrimp and crab (crustaceans); can eat fish', 'event': 'UPDATE', 'old_memory': 'User is allergic to seafood'}
+2026-01-20 14:27:31 INFO [main.py] Updating memory with data='User is not allergic to seafood in general; allergic to shrimp and crab (crustaceans); can eat fish'
+2026-01-20 14:27:31 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-20 14:27:31 INFO [main.py] Updating memory with ID memory_id='fd38ee9f-7429-4338-97a0-4bad21202dc7' with data='User is not allergic to seafood in general; allergic to shrimp and crab (crustaceans); can eat fish'
+2026-01-20 14:27:31 INFO [main.py] {'id': '1', 'text': 'At group meals, user usually eats vegetarian food or steak', 'event': 'NONE'}
+2026-01-20 14:27:31 INFO [main.py] NOOP for Memory.
+2026-01-20 14:27:31 INFO [main.py] {'id': '2', 'text': 'User wants to find good vegetarian restaurants in Tokyo', 'event': 'NONE'}
+2026-01-20 14:27:31 INFO [main.py] NOOP for Memory.
+2026-01-20 14:27:31 INFO [main.py] {'id': '3', 'text': 'User has a Shiba Inu named 麻糬', 'event': 'NONE'}
+2026-01-20 14:27:31 INFO [main.py] NOOP for Memory.
+2026-01-20 14:27:31 INFO [main.py] {'id': '4', 'text': 'Now works as a backend engineer at a technology company', 'event': 'NONE'}
+2026-01-20 14:27:31 INFO [main.py] NOOP for Memory.
+2026-01-20 14:27:31 INFO [main.py] {'id': '5', 'text': 'Customer name: Elsa', 'event': 'NONE'}
+2026-01-20 14:27:31 INFO [main.py] NOOP for Memory.
+2026-01-20 14:27:31 INFO [main.py] {'id': '6', 'text': "Pet 麻糬 now wakes up at 8 o'clock", 'event': 'NONE'}
+2026-01-20 14:27:31 INFO [main.py] NOOP for Memory.
+2026-01-20 14:27:31 INFO [poc.py] Memories operation: 1
+2026-01-20 14:27:31 INFO [poc.py] {'id': 'fd38ee9f-7429-4338-97a0-4bad21202dc7', 'memory': 'User is not allergic to seafood in general; allergic to shrimp and crab (crustaceans); can eat fish', 'event': 'UPDATE', 'previous_memory': 'User is allergic to seafood'}
+2026-01-20 14:27:34 INFO [poc.py] ==================================================
+2026-01-20 14:27:34 INFO [poc.py] [Round 10] Human Question:
+幫我規劃一下東京出差的晚餐，記得考慮我的過敏和飲食習慣。
+2026-01-20 14:27:34 INFO [poc.py] Elsa has 16 existing memories
+2026-01-20 14:27:34 INFO [poc.py] Searching Top 100 relevant memories, user query: 幫我規劃一下東京出差的晚餐，記得考慮我的過敏和飲食習慣。
+2026-01-20 14:27:34 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-20 14:27:34 INFO [poc.py] Relevant memories for the query '幫我規劃一下東京出差的晚餐，記得考慮我的過敏和飲食習慣。':
+2026-01-20 14:27:34 INFO [poc.py] - User wants to find good vegetarian restaurants in Tokyo (Score: 0.467426478863)
+2026-01-20 14:27:34 INFO [poc.py] - User will go on a business trip to Tokyo, Japan next week (Score: 0.574095070362)
+2026-01-20 14:27:34 INFO [poc.py] - At group meals, user usually eats vegetarian food or steak (Score: 0.699319601059)
+2026-01-20 14:27:34 INFO [poc.py] - User is not allergic to seafood in general; allergic to shrimp and crab (crustaceans); can eat fish (Score: 0.703241229057)
+2026-01-20 14:27:34 INFO [poc.py] - Located in Taipei (Score: 0.763380765915)
+2026-01-20 14:27:34 INFO [poc.py] - User has a Shiba Inu named 麻糬 (Score: 0.77408427)
+2026-01-20 14:27:34 INFO [poc.py] - Customer name: Elsa (Score: 0.814700067043)
+2026-01-20 14:27:34 INFO [poc.py] - Pet named 麻糬 has been very lazy recently (Score: 0.820813119411)
+2026-01-20 14:27:34 INFO [poc.py] - Pet 麻糬 now wakes up at 8 o'clock (Score: 0.847221791744)
+2026-01-20 14:27:34 INFO [poc.py] - User's dog wants to go for a walk every morning at 6:00 (Score: 0.885204315186)
+2026-01-20 14:27:34 INFO [poc.py] - User wants to integrate AI functionality into their product (Score: 0.905345678329)
+2026-01-20 14:27:34 INFO [poc.py] - User recently changed jobs (Score: 0.935849368572)
+2026-01-20 14:27:34 INFO [poc.py] - User is considering switching their laptop to a Mac because the Go development environment seems more convenient on Mac (Score: 0.942565262318)
+2026-01-20 14:27:34 INFO [poc.py] - User primarily uses Go language (Score: 0.947328388691)
+2026-01-20 14:27:34 INFO [poc.py] - User recently started learning Python (Score: 0.956667661667)
+2026-01-20 14:27:34 INFO [poc.py] - Now works as a backend engineer at a technology company (Score: 0.965094447136)
+2026-01-20 14:27:34 INFO [poc.py] Searching Top 5 relevant memories, user query: 幫我規劃一下東京出差的晚餐，記得考慮我的過敏和飲食習慣。
+2026-01-20 14:27:35 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-20 14:27:35 INFO [poc.py] Relevant memories for the query '幫我規劃一下東京出差的晚餐，記得考慮我的過敏和飲食習慣。':
+2026-01-20 14:27:35 INFO [poc.py] - User wants to find good vegetarian restaurants in Tokyo (Score: 0.467426478863)
+2026-01-20 14:27:35 INFO [poc.py] - User will go on a business trip to Tokyo, Japan next week (Score: 0.574095070362)
+2026-01-20 14:27:35 INFO [poc.py] - At group meals, user usually eats vegetarian food or steak (Score: 0.699319601059)
+2026-01-20 14:27:35 INFO [poc.py] - User is not allergic to seafood in general; allergic to shrimp and crab (crustaceans); can eat fish (Score: 0.703241229057)
+2026-01-20 14:27:35 INFO [poc.py] - Located in Taipei (Score: 0.763380765915)
+2026-01-20 14:27:35 INFO [poc.py] System Prompt:
+You are a helpful AI. Answer the question based on query and memories.
+User memories:
+- User wants to find good vegetarian restaurants in Tokyo
+- User will go on a business trip to Tokyo, Japan next week
+- At group meals, user usually eats vegetarian food or steak
+- User is not allergic to seafood in general; allergic to shrimp and crab (crustaceans); can eat fish
+- Located in Taipei
+
+2026-01-20 14:28:13 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-20 14:28:13 INFO [poc.py] [Round 10] AI Response:
+以下用「出差一週、晚餐為主」幫你規劃一份好執行的東京晚餐清單與備案，已把你的飲食習慣（偏素、也可吃牛排）與過敏（對蝦、蟹等甲殼類過敏；一般海鮮與魚可）納入。
+
+## 你的用餐原則（在東京最實用）
+- **優先選擇：素食 / 植物性為主**（比較好避開甲殼類交叉污染）
+- **需要時可選牛排**（團體聚餐更容易配合）
+- **可吃魚**，但在日本餐廳仍要特別注意：有些湯底/醬汁會用到蟹粉、蝦醬、蝦油或甲殼類高湯
+- **用餐關鍵詞**：避免「えび(海老)」「かに(蟹)」「甲殻類(こうかくるい)」
+
+---
+
+## 7 天晚餐建議（每晚一個方向＋備案）
+> 因為你沒提供飯店/公司地點，我先用「類型＋在東京常見、好訂位的選擇」來排；你回我活動範圍（如新宿/丸之內/品川/渋谷等）我再把每一晚精準對到附近店家與交通時間。
+
+### Day 1：抵達/第一晚保守方案（素食拉麵 or 定食）
+- **主選**：素食拉麵、精進料理定食（最少踩雷）
+- **備案**：便利商店組合（飯糰挑海苔/鮭魚，避開「えび」「かに」；沙拉＋豆腐＋水果）
+
+### Day 2：同事聚餐友善（牛排館）
+- **主選**：牛排/鐵板燒（容易清楚避開蝦蟹，直接點牛排＋蔬菜）
+- **提醒**：鐵板燒常同台料理海鮮，**要請店家避免同一鐵板接觸蝦蟹**
+
+### Day 3：偏素但有日式風味（居酒屋蔬菜/豆腐料理）
+- **主選**：蔬菜串燒、冷奴/湯豆腐、烤香菇、烤茄子、毛豆
+- **注意**：天婦羅/炸物可能混炸蝦；點餐時避開「海老天」「かき揚げ（可能混蝦）」
+
+### Day 4：想吃得正式（精進料理/素食懷石）
+- **主選**：精進料理（天然避開魚蝦蟹）
+- **優點**：最符合你的「偏素」習慣，也適合商務請客
+
+### Day 5：快速又穩（咖哩/義式/地中海）
+- **主選**：蔬菜咖哩、瑪格麗特披薩、蘑菇義大利麵、沙拉＋起司
+- **注意**：日式咖哩偶爾會用海鮮高湯；可優先選明確標示 vegetarian/plant-based 的店
+
+### Day 6：你可吃魚的日式餐（壽司/海鮮丼的「魚類限定」）
+- **主選**：以魚為主的壽司（鮪魚、鮭魚、鰤魚等），避免甲殼類與蟹味噌
+- **注意**：壽司吧檯交叉污染機率較高；若你對甲殼類很嚴重，建議選能客製的店或改吃牛排/素食
+
+### Day 7：最後一晚放鬆（素食居酒屋或小酒館）
+- **主選**：素食友善酒館（多樣小菜，安全性高）
+- **備案**：牛排＋蔬菜、或飯店附近的素食便當
+
+---
+
+## 我推薦你在東京可優先鎖定的「店型」與具體店家方向
+若你想要我直接幫你放進行程、可訂位的名單，我可以依你地點再縮到 1–2km 內。先給你幾個東京很常被選的素食友善方向（避免踩雷）：
+
+- **T’s たんたん（東京站一帶常見）**：以植物性拉麵聞名，對出差很方便  
+- **AIN SOPH（多區域）**：偏植物性餐廳，聚餐也體面  
+- **精進料理（寺院系/懷石系）**：商務場合很加分、也最能避開甲殼類
+
+（若你告訴我你住哪個站附近，我可以把每晚餐廳直接指定到「某分店/某店名」、加上地圖連結與訂位建議。）
+
+---
+
+## 點餐過敏溝通（請直接複製給店員）
+**日文版本（建議）**  
+- 私は**えび・かに（甲殻類）アレルギー**があります。  
+  **えび・かに**を使った料理は食べられません。  
+  可能であれば、**同じ油・同じ調理器具**での調理も避けてください。  
+- 魚は食べられます。  
+
+**中文補充（若需要）**  
+- 我對蝦、蟹過敏（甲殼類），請避免含蝦蟹及其湯底/醬汁，並盡量避免同油鍋/同器具。
+
+---
+
+## 我需要你補 3 個資訊，才能把晚餐排到「每天去哪一家」
+1) 你這次主要活動區域：例如 **東京站/丸之內、品川、新宿、渋谷、六本木、池袋**？  
+2) 你有幾晚是「一定會團體聚餐」？（方便我把那幾晚安排成牛排/居酒屋更好融入）  
+3) 你的甲殼類過敏嚴重程度：  
+   - A. 只要不吃到就可以  
+   - B. 需要避免同鍋/同油/同器具（較嚴格）
+
+你回我以上 3 點後，我就把 7 晚各自安排成「餐廳名稱＋怎麼去＋建議菜單＋避雷點＋訂位方式」。
+2026-01-20 14:28:13 INFO [poc.py] Try to add memory for user 'Elsa': 幫我規劃一下東京出差的晚餐，記得考慮我的過敏和飲食習慣。
+2026-01-20 14:28:15 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-20 14:28:15 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-20 14:28:16 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-20 14:28:16 INFO [main.py] Total existing memories: 8
+2026-01-20 14:28:20 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-20 14:28:20 INFO [main.py] {'id': '0', 'text': 'User wants to find good vegetarian restaurants in Tokyo', 'event': 'NONE'}
+2026-01-20 14:28:20 INFO [main.py] NOOP for Memory.
+2026-01-20 14:28:20 INFO [main.py] {'id': '1', 'text': 'User will go on a business trip to Tokyo, Japan next week', 'event': 'NONE'}
+2026-01-20 14:28:20 INFO [main.py] NOOP for Memory.
+2026-01-20 14:28:20 INFO [main.py] {'id': '2', 'text': 'At group meals, user usually eats vegetarian food or steak', 'event': 'NONE'}
+2026-01-20 14:28:20 INFO [main.py] NOOP for Memory.
+2026-01-20 14:28:20 INFO [main.py] {'id': '3', 'text': 'Located in Taipei', 'event': 'NONE'}
+2026-01-20 14:28:20 INFO [main.py] NOOP for Memory.
+2026-01-20 14:28:20 INFO [main.py] {'id': '4', 'text': 'User wants to integrate AI functionality into their product', 'event': 'NONE'}
+2026-01-20 14:28:20 INFO [main.py] NOOP for Memory.
+2026-01-20 14:28:20 INFO [main.py] {'id': '5', 'text': 'User is not allergic to seafood in general; allergic to shrimp and crab (crustaceans); can eat fish', 'event': 'NONE'}
+2026-01-20 14:28:20 INFO [main.py] NOOP for Memory.
+2026-01-20 14:28:20 INFO [main.py] {'id': '6', 'text': 'User has a Shiba Inu named 麻糬', 'event': 'NONE'}
+2026-01-20 14:28:20 INFO [main.py] NOOP for Memory.
+2026-01-20 14:28:20 INFO [main.py] {'id': '7', 'text': 'Customer name: Elsa', 'event': 'NONE'}
+2026-01-20 14:28:20 INFO [main.py] NOOP for Memory.
+2026-01-20 14:28:20 INFO [main.py] {'id': '8', 'text': 'User wants help planning dinners for their Tokyo business trip', 'event': 'ADD'}
+2026-01-20 14:28:20 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-20 14:28:20 INFO [poc.py] Memories operation: 1
+2026-01-20 14:28:20 INFO [poc.py] {'id': 'eaaca211-608d-454e-880b-1ebdb1e4788a', 'memory': 'User wants help planning dinners for their Tokyo business trip', 'event': 'ADD'}
+2026-01-20 14:28:23 INFO [poc.py] ==================================================
+2026-01-20 14:28:23 INFO [poc.py] [Round 11] Human Question:
+其實「麻糬」上個月送給住在南部的親戚養了，我現在家裡沒有寵物。
+2026-01-20 14:28:23 INFO [poc.py] Elsa has 17 existing memories
+2026-01-20 14:28:23 INFO [poc.py] Searching Top 100 relevant memories, user query: 其實「麻糬」上個月送給住在南部的親戚養了，我現在家裡沒有寵物。
+2026-01-20 14:28:24 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-20 14:28:24 INFO [poc.py] Relevant memories for the query '其實「麻糬」上個月送給住在南部的親戚養了，我現在家裡沒有寵物。':
+2026-01-20 14:28:24 INFO [poc.py] - Pet named 麻糬 has been very lazy recently (Score: 0.437645614147)
+2026-01-20 14:28:24 INFO [poc.py] - User has a Shiba Inu named 麻糬 (Score: 0.506543338299)
+2026-01-20 14:28:24 INFO [poc.py] - Pet 麻糬 now wakes up at 8 o'clock (Score: 0.528483867645)
+2026-01-20 14:28:24 INFO [poc.py] - User is not allergic to seafood in general; allergic to shrimp and crab (crustaceans); can eat fish (Score: 0.821017861366)
+2026-01-20 14:28:24 INFO [poc.py] - At group meals, user usually eats vegetarian food or steak (Score: 0.826328516006)
+2026-01-20 14:28:24 INFO [poc.py] - Located in Taipei (Score: 0.868981838226)
+2026-01-20 14:28:24 INFO [poc.py] - User recently changed jobs (Score: 0.871172964573)
+2026-01-20 14:28:24 INFO [poc.py] - Customer name: Elsa (Score: 0.871528506279)
+2026-01-20 14:28:24 INFO [poc.py] - User's dog wants to go for a walk every morning at 6:00 (Score: 0.87356030941)
+2026-01-20 14:28:24 INFO [poc.py] - User will go on a business trip to Tokyo, Japan next week (Score: 0.876077830791)
+2026-01-20 14:28:24 INFO [poc.py] - User wants to find good vegetarian restaurants in Tokyo (Score: 0.884254157543)
+2026-01-20 14:28:24 INFO [poc.py] - User wants help planning dinners for their Tokyo business trip (Score: 0.89500015974)
+2026-01-20 14:28:24 INFO [poc.py] - User recently started learning Python (Score: 0.912749409676)
+2026-01-20 14:28:24 INFO [poc.py] - Now works as a backend engineer at a technology company (Score: 0.922533214092)
+2026-01-20 14:28:24 INFO [poc.py] - User primarily uses Go language (Score: 0.944823861122)
+2026-01-20 14:28:24 INFO [poc.py] - User is considering switching their laptop to a Mac because the Go development environment seems more convenient on Mac (Score: 0.945699989796)
+2026-01-20 14:28:24 INFO [poc.py] - User wants to integrate AI functionality into their product (Score: 0.998341679573)
+2026-01-20 14:28:24 INFO [poc.py] Searching Top 5 relevant memories, user query: 其實「麻糬」上個月送給住在南部的親戚養了，我現在家裡沒有寵物。
+2026-01-20 14:28:24 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-20 14:28:24 INFO [poc.py] Relevant memories for the query '其實「麻糬」上個月送給住在南部的親戚養了，我現在家裡沒有寵物。':
+2026-01-20 14:28:24 INFO [poc.py] - Pet named 麻糬 has been very lazy recently (Score: 0.437192261219)
+2026-01-20 14:28:24 INFO [poc.py] - User has a Shiba Inu named 麻糬 (Score: 0.506188929081)
+2026-01-20 14:28:24 INFO [poc.py] - Pet 麻糬 now wakes up at 8 o'clock (Score: 0.528393745422)
+2026-01-20 14:28:24 INFO [poc.py] - User is not allergic to seafood in general; allergic to shrimp and crab (crustaceans); can eat fish (Score: 0.822313547134)
+2026-01-20 14:28:24 INFO [poc.py] - At group meals, user usually eats vegetarian food or steak (Score: 0.826349198818)
+2026-01-20 14:28:24 INFO [poc.py] System Prompt:
+You are a helpful AI. Answer the question based on query and memories.
+User memories:
+- Pet named 麻糬 has been very lazy recently
+- User has a Shiba Inu named 麻糬
+- Pet 麻糬 now wakes up at 8 o'clock
+- User is not allergic to seafood in general; allergic to shrimp and crab (crustaceans); can eat fish
+- At group meals, user usually eats vegetarian food or steak
+
+2026-01-20 14:28:27 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-20 14:28:27 INFO [poc.py] [Round 11] AI Response:
+了解，那我把先前關於你家裡現在還有柴犬「麻糬」的資訊更新掉：你上個月已經把麻糬送給住在南部的親戚養，所以你目前家裡沒有寵物。
+
+如果你願意也可以告訴我兩件事，方便之後我不會搞混：
+1) 麻糬現在是「永久轉養」還是暫時寄養？  
+2) 你還會固定去探望或接回來住一段時間嗎？
+2026-01-20 14:28:27 INFO [poc.py] Try to add memory for user 'Elsa': 其實「麻糬」上個月送給住在南部的親戚養了，我現在家裡沒有寵物。
+2026-01-20 14:28:29 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-20 14:28:30 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-20 14:28:30 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-20 14:28:30 INFO [main.py] Total existing memories: 7
+2026-01-20 14:28:34 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-20 14:28:34 INFO [main.py] {'id': '3', 'text': 'User recently changed jobs', 'event': 'NONE'}
+2026-01-20 14:28:34 INFO [main.py] NOOP for Memory.
+2026-01-20 14:28:34 INFO [main.py] {'id': '4', 'text': 'Located in Taipei', 'event': 'NONE'}
+2026-01-20 14:28:34 INFO [main.py] NOOP for Memory.
+2026-01-20 14:28:34 INFO [main.py] {'id': '6', 'text': 'User is not allergic to seafood in general; allergic to shrimp and crab (crustaceans); can eat fish', 'event': 'NONE'}
+2026-01-20 14:28:34 INFO [main.py] NOOP for Memory.
+2026-01-20 14:28:34 INFO [main.py] {'id': '0', 'text': 'Pet named 麻糬 has been very lazy recently', 'event': 'DELETE'}
+2026-01-20 14:28:34 INFO [main.py] Deleting memory with memory_id='12c99905-c135-445c-8075-00094923b185'
+2026-01-20 14:28:34 INFO [main.py] {'id': '1', 'text': 'User has a Shiba Inu named 麻糬', 'event': 'DELETE'}
+2026-01-20 14:28:34 INFO [main.py] Deleting memory with memory_id='038ad697-07ba-46bc-b60a-dd47ff8d51b2'
+2026-01-20 14:28:34 INFO [main.py] {'id': '2', 'text': "Pet 麻糬 now wakes up at 8 o'clock", 'event': 'DELETE'}
+2026-01-20 14:28:34 INFO [main.py] Deleting memory with memory_id='c979d31f-f8a0-47ab-a1fd-8f9ec0116e4a'
+2026-01-20 14:28:34 INFO [main.py] {'id': '5', 'text': "User's dog wants to go for a walk every morning at 6:00", 'event': 'DELETE'}
+2026-01-20 14:28:34 INFO [main.py] Deleting memory with memory_id='e8715d1b-f8a9-49e5-aafb-1a6600a9faf0'
+2026-01-20 14:28:34 INFO [main.py] {'id': '7', 'text': 'Last month, user gave pet 麻糬 to relatives living in southern Taiwan to raise', 'event': 'ADD'}
+2026-01-20 14:28:34 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-20 14:28:34 INFO [main.py] {'id': '8', 'text': 'Currently, user has no pets at home', 'event': 'ADD'}
+2026-01-20 14:28:35 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-20 14:28:35 INFO [poc.py] Memories operation: 6
+2026-01-20 14:28:35 INFO [poc.py] {'id': '12c99905-c135-445c-8075-00094923b185', 'memory': 'Pet named 麻糬 has been very lazy recently', 'event': 'DELETE'}
+2026-01-20 14:28:35 INFO [poc.py] {'id': '038ad697-07ba-46bc-b60a-dd47ff8d51b2', 'memory': 'User has a Shiba Inu named 麻糬', 'event': 'DELETE'}
+2026-01-20 14:28:35 INFO [poc.py] {'id': 'c979d31f-f8a0-47ab-a1fd-8f9ec0116e4a', 'memory': "Pet 麻糬 now wakes up at 8 o'clock", 'event': 'DELETE'}
+2026-01-20 14:28:35 INFO [poc.py] {'id': 'e8715d1b-f8a9-49e5-aafb-1a6600a9faf0', 'memory': "User's dog wants to go for a walk every morning at 6:00", 'event': 'DELETE'}
+2026-01-20 14:28:35 INFO [poc.py] {'id': 'a6d441a4-b6a5-4513-aae5-856accc857f8', 'memory': 'Last month, user gave pet 麻糬 to relatives living in southern Taiwan to raise', 'event': 'ADD'}
+2026-01-20 14:28:35 INFO [poc.py] {'id': '9072b299-dbce-4085-862e-b00cc9714e02', 'memory': 'Currently, user has no pets at home', 'event': 'ADD'}
+2026-01-20 14:28:38 INFO [poc.py] ==================================================
+2026-01-20 14:28:38 INFO [poc.py] [Round 12] Human Question:
+你還記得我養的是什麼狗，以及我現在主要用什麼程式語言工作嗎？
+2026-01-20 14:28:38 INFO [poc.py] Elsa has 15 existing memories
+2026-01-20 14:28:38 INFO [poc.py] Searching Top 100 relevant memories, user query: 你還記得我養的是什麼狗，以及我現在主要用什麼程式語言工作嗎？
+2026-01-20 14:28:38 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-20 14:28:38 INFO [poc.py] Relevant memories for the query '你還記得我養的是什麼狗，以及我現在主要用什麼程式語言工作嗎？':
+2026-01-20 14:28:38 INFO [poc.py] - User primarily uses Go language (Score: 0.674009978771)
+2026-01-20 14:28:38 INFO [poc.py] - Now works as a backend engineer at a technology company (Score: 0.679272711277)
+2026-01-20 14:28:38 INFO [poc.py] - Last month, user gave pet 麻糬 to relatives living in southern Taiwan to raise (Score: 0.706738770008)
+2026-01-20 14:28:38 INFO [poc.py] - Currently, user has no pets at home (Score: 0.725401222706)
+2026-01-20 14:28:38 INFO [poc.py] - User recently started learning Python (Score: 0.774098753929)
+2026-01-20 14:28:38 INFO [poc.py] - User recently changed jobs (Score: 0.802980959415)
+2026-01-20 14:28:38 INFO [poc.py] - User is considering switching their laptop to a Mac because the Go development environment seems more convenient on Mac (Score: 0.810655832291)
+2026-01-20 14:28:38 INFO [poc.py] - User wants to integrate AI functionality into their product (Score: 0.817796349525)
+2026-01-20 14:28:38 INFO [poc.py] - Customer name: Elsa (Score: 0.826065421104)
+2026-01-20 14:28:38 INFO [poc.py] - Located in Taipei (Score: 0.84866976738)
+2026-01-20 14:28:38 INFO [poc.py] - User wants help planning dinners for their Tokyo business trip (Score: 0.857183873653)
+2026-01-20 14:28:38 INFO [poc.py] - User will go on a business trip to Tokyo, Japan next week (Score: 0.86728054285)
+2026-01-20 14:28:38 INFO [poc.py] - At group meals, user usually eats vegetarian food or steak (Score: 0.875856041908)
+2026-01-20 14:28:38 INFO [poc.py] - User wants to find good vegetarian restaurants in Tokyo (Score: 0.885891377926)
+2026-01-20 14:28:38 INFO [poc.py] - User is not allergic to seafood in general; allergic to shrimp and crab (crustaceans); can eat fish (Score: 0.920876562595)
+2026-01-20 14:28:38 INFO [poc.py] Searching Top 5 relevant memories, user query: 你還記得我養的是什麼狗，以及我現在主要用什麼程式語言工作嗎？
+2026-01-20 14:28:38 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-01-20 14:28:38 INFO [poc.py] Relevant memories for the query '你還記得我養的是什麼狗，以及我現在主要用什麼程式語言工作嗎？':
+2026-01-20 14:28:38 INFO [poc.py] - User primarily uses Go language (Score: 0.674009978771)
+2026-01-20 14:28:38 INFO [poc.py] - Now works as a backend engineer at a technology company (Score: 0.679272711277)
+2026-01-20 14:28:38 INFO [poc.py] - Last month, user gave pet 麻糬 to relatives living in southern Taiwan to raise (Score: 0.706738770008)
+2026-01-20 14:28:38 INFO [poc.py] - Currently, user has no pets at home (Score: 0.725401222706)
+2026-01-20 14:28:38 INFO [poc.py] - User recently started learning Python (Score: 0.774098753929)
+2026-01-20 14:28:38 INFO [poc.py] System Prompt:
+You are a helpful AI. Answer the question based on query and memories.
+User memories:
+- User primarily uses Go language
+- Now works as a backend engineer at a technology company
+- Last month, user gave pet 麻糬 to relatives living in southern Taiwan to raise
+- Currently, user has no pets at home
+- User recently started learning Python
+
+2026-01-20 14:28:41 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-20 14:28:41 INFO [poc.py] [Round 12] AI Response:
+你之前養的狗叫「麻糬」（上個月把牠交給住在台灣南部的親戚照顧），而你現在工作上主要使用的程式語言是 **Go**。
+2026-01-20 14:28:41 INFO [poc.py] Try to add memory for user 'Elsa': 你還記得我養的是什麼狗，以及我現在主要用什麼程式語言工作嗎？
+2026-01-20 14:28:42 INFO [_client.py] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-01-20 14:28:42 INFO [main.py] Total existing memories: 0
+2026-01-20 14:28:42 WARNING [poc.py] No memory was added.
+2026-01-20 14:28:45 INFO [poc.py] 
+=== Conversation History ===
+2026-01-20 14:28:45 INFO [poc.py] Round 1 Human: 你好，我叫Elsa，我目前在台北的一家科技公司擔任前端工程師。
+2026-01-20 14:28:45 INFO [poc.py] Round 1 AI: 你好 Elsa，你好！  
+目前在台北做前端工程師很酷，也很能跟上很多新技術。
+
+你想聊哪一塊我可以幫上忙？例如：  
+1) 前端技術/架構（React/Vue、狀態管理、效能優化、SSR/CSR）  
+2) 作品集與履歷（專案描述怎麼寫、亮點整理、面試題準備）  
+3) 職涯規劃（往資深/Tech Lead、全端、或轉產品/管理）  
+4) 工作疑難雜症（CI/CD、測試、TypeScript、可維護性）
+
+你現在最想解決的目標或卡關點是什麼？
+2026-01-20 14:28:45 INFO [poc.py] Round 2 Human: 我最近開始學習 Python，因為我想把 AI 功能整合到我們的產品中。
+2026-01-20 14:28:45 INFO [poc.py] Round 2 AI: 很棒的方向。以你前端工程師、想把 AI 整合進產品的目標來看，學 Python 最有效的是走「能做出可上線的 AI 功能」這條路：會呼叫模型、會做資料處理、會把服務包成 API、再跟前端串起來。
+
+下面給你一個實務導向的學習路線（偏產品整合）：
+
+## 1) 先把 Python 基礎補到「能寫後端服務」
+你不需要一開始就鑽語法細節，先確保能寫出可維護的程式與服務：
+- Python 基本語法（資料型別、函式、類別、例外處理）
+- 常用標準庫：`json`、`datetime`、`pathlib`、`logging`
+- 套件管理：`pip` / `uv` / `poetry`（擇一）
+- 虛擬環境：`venv`
+- 型別提示：`typing`（對團隊協作很加分）
+
+## 2) 立即切入「把 AI 當 API 使用」
+產品整合最常見是「呼叫 LLM → 回傳結果 → 前端呈現」：
+- 了解 Prompt 基本技巧（格式、限制、輸出 schema）
+- 結構化輸出（JSON schema / function calling / tools）
+- 串流回傳（streaming，前端體驗更好）
+- 成本與延遲管理（token、快取、重試）
+
+## 3) 用 FastAPI 做一個最小可用的 AI 後端
+你是前端背景，FastAPI 會很順：
+- 做 `/chat` 或 `/summarize` 端點
+- 加上 CORS、API key 驗證、rate limit（至少其中一兩個）
+- 日誌與可觀測性（request id、latency、error logs）
+
+## 4) 開始做「RAG」把產品知識接進模型
+如果你要讓模型回答公司文件/產品資料，RAG 幾乎是標配：
+- 文件切分（chunking）與清理
+- 向量化（embeddings）
+- 向量資料庫（Postgres pgvector / Pinecone / Weaviate / FAISS）
+- 檢索 + 重排（rerank，可選）
+- 評估（你要知道答案品質是否真的提升）
+
+## 5) 上線必備：安全、隱私、與品質控管
+- Prompt injection 防護（至少做輸入清洗、系統提示隔離、allowlist tools）
+- PII/敏感資訊處理（遮罩、避免記錄原文）
+- 回答的引用來源（citations），降低幻覺風險
+- 快取與降級策略（模型不可用時怎麼辦）
+
+---
+
+### 我想先確認一下你的目標，才能給你更精準的「下一步」
+Elsa，你打算整合的 AI 功能比較像哪一類？
+1) 客服/FAQ 聊天機器人  
+2) 文件摘要、生成、改寫（行銷文/信件/報告）  
+3) 搜尋/知識庫（把內部文件接進來）  
+4) 影像/語音相關  
+5) 其他（你描述一下）
+
+另外：你們產品目前後端是什麼技術（Node/Go/Java…）？  
+如果後端不是 Python，我也可以給你「Python 做 AI service、再由既有後端轉接」的架構建議。
+2026-01-20 14:28:45 INFO [poc.py] Round 3 Human: 我對海鮮過敏，所以聚餐時我通常只吃素食或牛排。
+2026-01-20 14:28:45 INFO [poc.py] Round 3 AI: 了解，Elsa。你對海鮮過敏的話，聚餐時選擇「全素/奶蛋素」或「牛排」確實是比較安全的方向。幾個實用做法讓你更安心：
+
+- **先跟店家確認**：是否有「海鮮高湯、蝦米、魚露、干貝醬、XO醬」等隱藏成分（很多湯、醬汁、炒菜會用到）。
+- **避免交叉污染**：請店家說明是否能分鍋/分煎台/分油鍋，尤其是煎台同時處理魚蝦的餐廳。
+- **點餐用語**（可直接複製給店員）  
+  - 「我對海鮮嚴重過敏，請不要加任何海鮮、魚露、蝦米、海鮮高湯，並盡量避免同鍋/同油炸/同煎台。」
+- **選餐小建議**：  
+  - 素食：清炒蔬菜、豆腐、蛋類（如果你吃蛋奶）、乾拌/乾炒類通常比湯麵安全（湯底常有海鮮成分）。  
+  - 牛排：優先選「原切、少加工」的；醬汁另外放，先確認是否含魚露/鰹魚粉等。
+- **若是較嚴重過敏**：建議隨身備藥，並跟同桌先說明你的過敏狀況。
+
+你通常是「吃到就會不適」還是「嚴重型（會喘、腫、起疹）」？我可以幫你把點餐策略再調整得更保守或更方便。
+2026-01-20 14:28:45 INFO [poc.py] Round 4 Human: 我有一隻叫「麻糬」的柴犬，牠每天早上 6 點就會吵著要出門散步。
+2026-01-20 14:28:45 INFO [poc.py] Round 4 AI: 聽起來麻糬已經把 6 點當成固定作息了。你可以用幾個方法把「早上吵著出門」變得更可控，甚至把時間慢慢往後挪一點：
+
+1) 先確認需求：是想上廁所還是想活動  
+- 如果一醒來就很急，可能是生理需求；這種比較難硬改。  
+- 如果是習慣/期待（覺得 6 點一定會出門），就有調整空間。
+
+2) 建立「安靜才會出門」的規則（很有效）  
+- 麻糬一吵就立刻出門，等於你在獎勵吵鬧。  
+- 做法：準備出門前必須先安靜（例如連續安靜 30 秒～1 分鐘）才拿牽繩、開門。  
+- 一吵就停下動作、等安靜再繼續。幾天到一兩週通常會看出差異。
+
+3) 把出門時間「循序延後」  
+- 每 2～3 天延後 5～10 分鐘（例如 6:00 → 6:10 → 6:20）。  
+- 延後期間如果牠叫，不要用「立刻出門」結束叫聲；至少等到安靜再出門。
+
+4) 前一晚把需求消耗掉  
+- 晚上增加 10～15 分鐘的散步或嗅聞（嗅聞比純走路更累）。  
+- 睡前最後一次尿尿時間稍微晚一點，也可能減少清晨急著出門。
+
+5) 早上先給「替代任務」再出門  
+- 例如起床先讓牠坐下/趴下、做 3～5 個簡單指令，或給嗅聞墊、藏食遊戲 5 分鐘。  
+- 讓牠學會：醒來不是立刻衝門口，而是先冷靜。
+
+如果你願意，我可以幫你判斷最適合的方案：麻糬幾歲？現在晚上最後一次出門大概幾點？牠是吠叫、哀鳴，還是抓門/跳床把你叫醒？另外你希望把散步時間調到幾點比較理想？
+2026-01-20 14:28:45 INFO [poc.py] Round 5 Human: 其實我最近換工作了，我現在轉職成了後端工程師，主要用 Go 語言。
+2026-01-20 14:28:45 INFO [poc.py] Round 5 AI: 了解，我會把你的背景更新成：你現在是後端工程師，主要使用 Go（在台北）。
+
+如果你願意多講一點，我也可以更精準地在之後的回答中對焦：
+1) 你後端主要做哪一塊：API、微服務、資料庫、訊息佇列、或基礎設施？  
+2) Go 的技術棧：Gin/Fiber/Echo、gRPC、SQL/ORM（GORM/sqlx）、Redis/Kafka/NATS？  
+3) 你之前前端的經驗，現在有沒有在做 full-stack 或跟前端協作的部分？  
+4) 你想把 AI 功能整合到產品的目標，有因為轉後端而改變嗎（例如更偏向推理服務、向量資料庫、RAG、或模型部署）？
+
+你也可以直接說你目前最卡的一件事（例如 Go 的並發、測試、專案結構、效能調校、或部署），我可以用 Go 的角度一起拆解。
+2026-01-20 14:28:45 INFO [poc.py] Round 6 Human: 下週我要去日本東京出差，我想在那邊找幾間好吃的素食餐廳。
+2026-01-20 14:28:45 INFO [poc.py] Round 6 AI: 在東京找素食其實很方便，我先按「全素 / 蛋奶素友善」各給你幾間口碑很穩、分店多或地點方便的選擇；另外你對海鮮過敏，去一般餐廳也要特別注意「魚介高湯（だし）」這點（很多看起來是素的其實用柴魚高湯）。
+
+## 推薦素食餐廳（東京）
+### 1) T’s たんたん（全素拉麵）
+- 特色：純素擔擔麵、餃子、湯頭濃但不靠魚介
+- 優點：常見於車站周邊，出差移動很方便  
+- 關鍵字：ヴィーガン / Vegan ramen
+
+### 2) Ain Soph 系列（偏蛋奶素/也有不少全素）
+- 特色：漢堡、鬆餅、甜點、早午餐，口味更「西式」  
+- 適合：想吃得精緻、也方便跟同事聚餐
+
+### 3) Nagi Shokudo（偏全素）
+- 特色：日式定食、小菜、咖哩等，吃起來很「家常但好吃」
+- 注意：店可能不大，尖峰時間建議避開或早點到
+
+### 4) Mr. Farmer（素食/純素選項多）
+- 特色：沙拉、蔬食碗、植物蛋白選擇多
+- 適合：想吃得清爽、控熱量或需要快速用餐
+
+### 5) Sorano（植物性料理取向）
+- 特色：蔬菜料理做得細緻，有點「小館/餐酒」氛圍
+- 適合：想找一間比較有質感、適合約客戶或同事的
+
+---
+
+## 你海鮮過敏：在日本點餐要特別注意的雷
+即使點「野菜」「豆腐」也可能含魚介：
+- だし（高湯）常用：かつお（柴魚）、煮干し（小魚乾）、あさり（蛤蜊）等  
+- 醬油/麵汁也可能含魚介萃取
+
+你可以直接用這句日文詢問（很實用）：
+- 「魚介アレルギーです。だし（かつお・煮干し）も食べられません。魚介不使用のメニューはありますか？」  
+（我對魚介過敏，高湯（柴魚/小魚乾）也不行。有沒有不使用魚介的餐點？）
+
+---
+
+## 我可以幫你縮到「離你住/開會地點最近」的清單
+你這次主要會在東京哪幾區活動？例如：新宿、渋谷、品川、東京站、銀座、六本木、秋葉原等。  
+另外你是「全素」還是「蛋奶素也可以」？我就能把餐廳精準到 5–8 間、附上交通方式/是否需預約與必點。
+2026-01-20 14:28:45 INFO [poc.py] Round 7 Human: 最近「麻糬」變得很懶，現在都要到 8 點才肯起床，真拿牠沒辦法。
+2026-01-20 14:28:45 INFO [poc.py] Round 7 AI: 聽起來「麻糬」最近把作息整個往後延了；如果牠之前都 6:00 就想出門，現在變成 8:00 才起床，通常可能是幾種情況：
+
+- **天氣/溫度變化**：變冷或下雨時，有些狗會更不想早起出門。  
+- **作息被強化了**：如果牠晚起也能照樣立刻散步、吃到早餐，牠就會覺得「晚起也沒差」。  
+- **活動量或刺激變少**：前一天運動不夠、白天比較無聊，反而容易睡得更散、更晚起。  
+- **身體狀況**：如果同時出現精神比較差、食慾變化、走路不太想走、咳嗽或拉肚子等，就要留意可能不只是「懶」。
+
+你可以試試看幾個溫和的調整方式（不需要一下子逼回 6 點）：
+1. **循序提早**：每天提早 10–15 分鐘叫起床，慢慢拉回想要的時間。  
+2. **固定早晨流程**：起床→上廁所→散步→回家吃早餐，流程固定，讓牠知道早起有好事但不會拖很久。  
+3. **把獎勵放在「早起」**：例如只有在你希望的時間起來，才有特別喜歡的零食或更想去的路線。  
+4. **晚上增加一點活動量**：晚餐後多 10–20 分鐘散步/嗅聞遊戲，通常能讓隔天精神更穩定。  
+
+想幫你更精準判斷：麻糬是「醒著但賴床不想動」，還是「真的睡死叫不醒」？另外最近天氣變冷、下雨，或你換工作後你們的作息也有變嗎？
+2026-01-20 14:28:45 INFO [poc.py] Round 8 Human: 我正在考慮把我的筆電換成 Mac，因為 Go 的開發環境好像比較方便。
+2026-01-20 14:28:45 INFO [poc.py] Round 8 AI: 換 Mac 對 Go 開發確實通常會更順手，尤其是你如果平常有用到 Docker、CLI 工具鏈、或需要接近 Linux 的環境。不過要不要換，建議你從「你現在的工作流」跟「硬體/相容性」兩條線來評估：
+
+## 1) 為什麼 Mac 對 Go 開發常見優勢
+- **類 Unix 環境**：shell、檔案權限、常用工具（ssh、curl、make 等）跟 Linux 很接近，很多 Go 專案的腳本/Makefile 比較少踩雷。
+- **套件與工具安裝容易**：Homebrew 裝 Go、gofumpt、golangci-lint、protoc、kubectl、terraform 這類工具很方便。
+- **Docker / 容器體驗通常較一致**：尤其團隊若多是 Linux/Mac，環境差異相對小（但 Docker Desktop 在 Mac 仍有虛擬化成本，見下面注意事項）。
+- **IDE 支援成熟**：GoLand、VS Code（gopls）在 macOS 體驗普遍不差。
+
+## 2) 需要注意的坑（避免買了才後悔）
+- **Apple Silicon（M1/M2/M3）相容性**：大多數 Go 工具沒問題，但若你依賴少見的二進位工具、老舊 C library、或特定資料庫/SDK（尤其只有 x86_64 的），可能需要 Rosetta 或改用替代方案。
+- **Docker 效能/檔案 I/O**：Mac 上跑容器是透過虛擬化，不等於原生 Linux。多容器、重 I/O（例如大型 monorepo、頻繁 mount）時，效能可能不如同價位的 Linux 桌機/筆電。
+- **公司內部工具/資安軟體**：有些 VPN、端點管控、憑證工具對 macOS/晶片架構有要求。換機前最好先確認 IT 支援範圍。
+- **鍵盤/快捷鍵習慣與外接螢幕**：如果你長期 Windows 熱鍵肌肉記憶，前一兩週會有切換成本。
+
+## 3) 我會怎麼建議你選（給後端/Go 開發情境）
+- 如果你日常是 **Go + Docker + k8s/雲端工具鏈**、並且常需要本機模擬接近 production 的環境：**Mac（Apple Silicon）通常是好選擇**。
+- 如果你大量跑 **重負載容器、需要很多 RAM、或偏向本機長時間跑多服務**：可以考慮 **Mac 但把記憶體加大**，或乾脆 **Linux 筆電**也很香（成本效益高）。
+- 如果你主要痛點只是「Windows 上環境麻煩」：你也可以先試試 **WSL2 + Ubuntu**，很多 Go 開發已經能非常接近 Mac/Linux 的順手程度，成本最低。
+
+## 4) 你如果要買 Mac，實用的規格建議
+- **CPU**：M2/M3 以上都夠 Go 開發用（編譯很快）。
+- **RAM**：建議 **至少 16GB**；如果你常開很多容器/IDE/瀏覽器分頁，考慮 **24GB 或 32GB**更舒適。
+- **SSD**：建議 **512GB 起跳**（Docker image、module cache、專案、多分支都很吃空間）。
+
+---
+
+如果你願意，我可以用更精準的方式幫你判斷值不值得換：  
+1) 你現在用的是 Windows 還是 Linux？主要痛點是什麼（安裝、權限、Docker、VPN、效能）？  
+2) 你日常會同時跑多少個 Docker container/服務？  
+3) 公司對作業系統或資安工具有沒有硬性規定？  
+4) 預算範圍大概多少、偏好 MacBook Air 還是 Pro？
+2026-01-20 14:28:45 INFO [poc.py] Round 9 Human: 我發現我上次說錯了，我不是對海鮮過敏，我是對「蝦蟹類」過敏，魚肉是可以吃的
+2026-01-20 14:28:45 INFO [poc.py] Round 9 AI: 了解，我幫你把記錄更正為：
+
+- 你不是對所有海鮮過敏  
+- 你是對「蝦、蟹等甲殼類」過敏  
+- 魚類（魚肉）你是可以吃的
+
+之後如果你問到聚餐/點餐建議，我會以「避開蝦蟹類、但可吃魚」來推薦。若你也會對蚌、蛤、牡蠣這類「貝類」不適，跟我說一下，我也可以一併記住。
+2026-01-20 14:28:45 INFO [poc.py] Round 10 Human: 幫我規劃一下東京出差的晚餐，記得考慮我的過敏和飲食習慣。
+2026-01-20 14:28:45 INFO [poc.py] Round 10 AI: 以下用「出差一週、晚餐為主」幫你規劃一份好執行的東京晚餐清單與備案，已把你的飲食習慣（偏素、也可吃牛排）與過敏（對蝦、蟹等甲殼類過敏；一般海鮮與魚可）納入。
+
+## 你的用餐原則（在東京最實用）
+- **優先選擇：素食 / 植物性為主**（比較好避開甲殼類交叉污染）
+- **需要時可選牛排**（團體聚餐更容易配合）
+- **可吃魚**，但在日本餐廳仍要特別注意：有些湯底/醬汁會用到蟹粉、蝦醬、蝦油或甲殼類高湯
+- **用餐關鍵詞**：避免「えび(海老)」「かに(蟹)」「甲殻類(こうかくるい)」
+
+---
+
+## 7 天晚餐建議（每晚一個方向＋備案）
+> 因為你沒提供飯店/公司地點，我先用「類型＋在東京常見、好訂位的選擇」來排；你回我活動範圍（如新宿/丸之內/品川/渋谷等）我再把每一晚精準對到附近店家與交通時間。
+
+### Day 1：抵達/第一晚保守方案（素食拉麵 or 定食）
+- **主選**：素食拉麵、精進料理定食（最少踩雷）
+- **備案**：便利商店組合（飯糰挑海苔/鮭魚，避開「えび」「かに」；沙拉＋豆腐＋水果）
+
+### Day 2：同事聚餐友善（牛排館）
+- **主選**：牛排/鐵板燒（容易清楚避開蝦蟹，直接點牛排＋蔬菜）
+- **提醒**：鐵板燒常同台料理海鮮，**要請店家避免同一鐵板接觸蝦蟹**
+
+### Day 3：偏素但有日式風味（居酒屋蔬菜/豆腐料理）
+- **主選**：蔬菜串燒、冷奴/湯豆腐、烤香菇、烤茄子、毛豆
+- **注意**：天婦羅/炸物可能混炸蝦；點餐時避開「海老天」「かき揚げ（可能混蝦）」
+
+### Day 4：想吃得正式（精進料理/素食懷石）
+- **主選**：精進料理（天然避開魚蝦蟹）
+- **優點**：最符合你的「偏素」習慣，也適合商務請客
+
+### Day 5：快速又穩（咖哩/義式/地中海）
+- **主選**：蔬菜咖哩、瑪格麗特披薩、蘑菇義大利麵、沙拉＋起司
+- **注意**：日式咖哩偶爾會用海鮮高湯；可優先選明確標示 vegetarian/plant-based 的店
+
+### Day 6：你可吃魚的日式餐（壽司/海鮮丼的「魚類限定」）
+- **主選**：以魚為主的壽司（鮪魚、鮭魚、鰤魚等），避免甲殼類與蟹味噌
+- **注意**：壽司吧檯交叉污染機率較高；若你對甲殼類很嚴重，建議選能客製的店或改吃牛排/素食
+
+### Day 7：最後一晚放鬆（素食居酒屋或小酒館）
+- **主選**：素食友善酒館（多樣小菜，安全性高）
+- **備案**：牛排＋蔬菜、或飯店附近的素食便當
+
+---
+
+## 我推薦你在東京可優先鎖定的「店型」與具體店家方向
+若你想要我直接幫你放進行程、可訂位的名單，我可以依你地點再縮到 1–2km 內。先給你幾個東京很常被選的素食友善方向（避免踩雷）：
+
+- **T’s たんたん（東京站一帶常見）**：以植物性拉麵聞名，對出差很方便  
+- **AIN SOPH（多區域）**：偏植物性餐廳，聚餐也體面  
+- **精進料理（寺院系/懷石系）**：商務場合很加分、也最能避開甲殼類
+
+（若你告訴我你住哪個站附近，我可以把每晚餐廳直接指定到「某分店/某店名」、加上地圖連結與訂位建議。）
+
+---
+
+## 點餐過敏溝通（請直接複製給店員）
+**日文版本（建議）**  
+- 私は**えび・かに（甲殻類）アレルギー**があります。  
+  **えび・かに**を使った料理は食べられません。  
+  可能であれば、**同じ油・同じ調理器具**での調理も避けてください。  
+- 魚は食べられます。  
+
+**中文補充（若需要）**  
+- 我對蝦、蟹過敏（甲殼類），請避免含蝦蟹及其湯底/醬汁，並盡量避免同油鍋/同器具。
+
+---
+
+## 我需要你補 3 個資訊，才能把晚餐排到「每天去哪一家」
+1) 你這次主要活動區域：例如 **東京站/丸之內、品川、新宿、渋谷、六本木、池袋**？  
+2) 你有幾晚是「一定會團體聚餐」？（方便我把那幾晚安排成牛排/居酒屋更好融入）  
+3) 你的甲殼類過敏嚴重程度：  
+   - A. 只要不吃到就可以  
+   - B. 需要避免同鍋/同油/同器具（較嚴格）
+
+你回我以上 3 點後，我就把 7 晚各自安排成「餐廳名稱＋怎麼去＋建議菜單＋避雷點＋訂位方式」。
+2026-01-20 14:28:45 INFO [poc.py] Round 11 Human: 其實「麻糬」上個月送給住在南部的親戚養了，我現在家裡沒有寵物。
+2026-01-20 14:28:45 INFO [poc.py] Round 11 AI: 了解，那我把先前關於你家裡現在還有柴犬「麻糬」的資訊更新掉：你上個月已經把麻糬送給住在南部的親戚養，所以你目前家裡沒有寵物。
+
+如果你願意也可以告訴我兩件事，方便之後我不會搞混：
+1) 麻糬現在是「永久轉養」還是暫時寄養？  
+2) 你還會固定去探望或接回來住一段時間嗎？
+2026-01-20 14:28:45 INFO [poc.py] Round 12 Human: 你還記得我養的是什麼狗，以及我現在主要用什麼程式語言工作嗎？
+2026-01-20 14:28:45 INFO [poc.py] Round 12 AI: 你之前養的狗叫「麻糬」（上個月把牠交給住在台灣南部的親戚照顧），而你現在工作上主要使用的程式語言是 **Go**。
+2026-01-20 14:28:45 INFO [poc.py] Cleaning up Redis DB...
+2026-01-20 14:28:45 INFO [poc.py] Connecting to Redis at redis://redis-stack:6379 for cleanup...
+2026-01-20 14:28:45 INFO [poc.py] Deleting key: mem0:test_mem0_collection:eaaca211-608d-454e-880b-1ebdb1e4788a
+2026-01-20 14:28:45 INFO [poc.py] Deleting key: mem0:test_mem0_collection:ad249c03-51cc-4180-85e1-b94160d319c6
+2026-01-20 14:28:45 INFO [poc.py] Deleting key: mem0:test_mem0_collection:2d0774e9-a82d-4678-b493-ebe7bf83b24b
+2026-01-20 14:28:45 INFO [poc.py] Deleting key: mem0:test_mem0_collection:f33d9aa0-b260-458c-a347-178baf11cde9
+2026-01-20 14:28:45 INFO [poc.py] Deleting key: mem0:test_mem0_collection:9072b299-dbce-4085-862e-b00cc9714e02
+2026-01-20 14:28:45 INFO [poc.py] Deleting key: mem0:test_mem0_collection:fd38ee9f-7429-4338-97a0-4bad21202dc7
+2026-01-20 14:28:45 INFO [poc.py] Deleting key: mem0:test_mem0_collection:3240b2df-07fa-479d-97c9-3e4b0691e332
+2026-01-20 14:28:45 INFO [poc.py] Deleting key: mem0:test_mem0_collection:591d1089-d429-4dc0-b9e7-f5b1e23c24b9
+2026-01-20 14:28:45 INFO [poc.py] Deleting key: mem0:test_mem0_collection:f77a9fe0-16f0-4a58-815f-129c76475ceb
+2026-01-20 14:28:45 INFO [poc.py] Deleting key: mem0:test_mem0_collection:411e7345-94e8-4f4f-91f4-46a7ffcaa2a0
+2026-01-20 14:28:45 INFO [poc.py] Deleting key: mem0:test_mem0_collection:df152447-2a64-4770-999b-e0b6053879a2
+2026-01-20 14:28:45 INFO [poc.py] Deleting key: mem0:test_mem0_collection:2ff2d611-87b8-4e9e-810b-0164237b473b
+2026-01-20 14:28:45 INFO [poc.py] Deleting key: mem0:test_mem0_collection:a45529e0-0ef1-48a7-a08b-c8ffcb46beba
+2026-01-20 14:28:45 INFO [poc.py] Deleting key: mem0:test_mem0_collection:a6d441a4-b6a5-4513-aae5-856accc857f8
+2026-01-20 14:28:45 INFO [poc.py] Deleting key: mem0:test_mem0_collection:66078ce7-6783-401e-be0b-1f953fd35622
+2026-01-20 14:28:45 INFO [poc.py] Redis database cleanup complete.
+2026-01-20 14:28:45 INFO [poc.py] Redis DB cleanup complete.
