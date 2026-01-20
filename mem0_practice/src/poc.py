@@ -1,39 +1,41 @@
 import os
+import sys
 import time
 import logging
+from datetime import datetime
 from openai import OpenAI
 from pymilvus import connections, db
+
+import redis
 
 os.environ["MEM0_TELEMETRY"] = "false"
 from mem0 import Memory
 
-import sys
-from datetime import datetime
-import os as _os
-
 # 建立 logs 資料夾
 log_dir = "logs"
-_os.makedirs(log_dir, exist_ok=True)
+os.makedirs(log_dir, exist_ok=True)
 log_filename = datetime.now().strftime("%Y%m%d_%H%M%S.log")
-log_path = _os.path.join(log_dir, log_filename)
+log_path = os.path.join(log_dir, log_filename)
 print(f"Logging to: {log_path}")
 
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s %(levelname)s [%(filename)s] %(message)s',
     datefmt='%Y-%m-%d %H:%M:%S',
-    handlers=[logging.FileHandler(log_path, encoding="utf-8"), logging.StreamHandler()]
+    # handlers=[logging.FileHandler(log_path, encoding="utf-8"), logging.StreamHandler()]
 )
 logger = logging.getLogger(__name__)
 logger.info(f"Running file: {os.path.abspath(sys.argv[0])}")
 
-def get_openai_client():
+def get_openai_client(base_url: str = None) -> OpenAI:
     try:
         from env import OPENAI_API_KEY
         os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
     except ImportError:
         OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 
+    if base_url:
+        return OpenAI(api_key=OPENAI_API_KEY, base_url=base_url)
     return OpenAI(api_key=OPENAI_API_KEY)
 
 
@@ -41,7 +43,9 @@ def get_config(
         database_name: str, 
         collection_name: str,
         model_name: str,
-        embedding_model: str):
+        embedding_model: str,
+        rerank_model: str = None,
+    ):
     
     # custom_extraction_prompt = None
 
@@ -105,14 +109,23 @@ def get_config(
 
     return {
         # https://github.com/mem0ai/mem0/blob/dba7f0458aeb50aa7078d36eaefa2405afbee620/mem0/configs/vector_stores/milvus.py#L22
+        # "vector_store": {
+        #     "provider": "milvus",
+        #     "config": {
+        #         "collection_name": collection_name,
+        #         "url": os.environ.get("MILVUS_URI", "http://milvus-standalone:19530"),
+        #         "token": "",
+        #         "db_name": database_name,
+        #         # "embedding_model_dims": 1536,
+        #     },
+        # },
         "vector_store": {
-            "provider": "milvus",
+            "provider": "redis",
             "config": {
                 "collection_name": collection_name,
-                "url": os.environ.get("MILVUS_URI", "http://milvus-standalone:19530"),
-                "token": "",
-                "db_name": database_name,
-            },
+                "redis_url": os.environ.get("REDIS_URI", "redis://redis-stack:6379"),
+                # "embedding_model_dims": 1536,
+            }
         },
         # #https://github.com/mem0ai/mem0/blob/main/mem0/configs/llms
         "llm": {
@@ -130,6 +143,12 @@ def get_config(
         },
         "custom_fact_extraction_prompt": custom_extraction_prompt,
         "custom_update_memory_prompt": custom_update_memory_prompt,
+        "reanker": {
+            "provider": "openai",
+            "config": {
+                "model": rerank_model,
+            }
+        },
         "version": "v1.1",
     }
 
@@ -175,7 +194,39 @@ def clean_up_milvus_db(config):
         except Exception as e:
             logger.warning(f"Failed to clean up Milvus database: {e}")
 
+
+def clean_up_redis_db(config):
+    redis_config = config["vector_store"]["config"]
+    redis_url = redis_config["redis_url"]
+
+    try:
+        logger.info(f"Connecting to Redis at {redis_url} for cleanup...")
+        r = redis.from_url(redis_url)
+
+        # List all keys in Redis
+        keys = r.keys('*')
+        for key in keys:
+            key_str = key.decode('utf-8')
+            logger.info(f"Deleting key: {key_str}")
+            r.delete(key_str)
+
+        logger.info("Redis database cleanup complete.")
+    except Exception as e:
+        logger.warning(f"Failed to clean up Redis database: {e}")
+
 def add_memory(m, user_id: str, content: str):
+    # def add(
+    #     self,
+    #     messages,
+    #     *,
+    #     user_id: Optional[str] = None,
+    #     agent_id: Optional[str] = None,
+    #     run_id: Optional[str] = None,
+    #     metadata: Optional[Dict[str, Any]] = None,
+    #     infer: bool = True,
+    #     memory_type: Optional[str] = None,
+    #     prompt: Optional[str] = None,
+    # )
     logger.info(f"Try to add memory for user '{user_id}': {content}")
     res = m.add(
         messages=content,
@@ -198,7 +249,19 @@ def get_memory(m, user_id: str):
     return memories
 
 
-def search_memory(m, user_id: str, query: str, top_k: int = 5):
+def search_memory(m, user_id: str, query: str):
+    # def search(
+    #     self,
+    #     query: str,
+    #     *,
+    #     user_id: Optional[str] = None,
+    #     agent_id: Optional[str] = None,
+    #     run_id: Optional[str] = None,
+    #     limit: int = 100,
+    #     filters: Optional[Dict[str, Any]] = None,
+    #     threshold: Optional[float] = None,
+    #     rerank: bool = True,
+    # ):
     memories = m.search(query=query, user_id=user_id)
     logger.info(f"Relevant memories for the query '{query}':")
     for i, entry in enumerate(memories.get("results", []), start=1):
@@ -217,7 +280,7 @@ def chat_with_memory(
     memories = get_memory(m, user_id)
 
     existing_memory = memories.get("results", [])
-    logger.info(f"Existing memories count: {len(existing_memory)}")
+    logger.info(f"{user_id} has {len(existing_memory)} existing memories count")
     if len(existing_memory) > 0:
         logger.info("Searching for relevant memories...")
         relevant_memories = search_memory(m, user_id, text)
@@ -269,27 +332,31 @@ def chat_with_stm(
     return response.choices[0].message.content
 
 ## llm + mem0
-def main_llm_mem0():
+def main_llm_mem0(vector_store: str = "milvus"):
     database_name = "test_mem0_db"
     collection_name = "test_mem0_collection"
     model_name = "gpt-5.2-2025-12-11"
     embedding_model = "text-embedding-3-large"
+    rerank_model = "GPT-4o-mini"
 
-    logger.info("Initializing Memory with Milvus backend...")
+    logger.info(f"Initializing Memory with {vector_store} backend...")
     logger.info(f"Database Name: {database_name}")
     logger.info(f"Collection Name: {collection_name}")
     logger.info(f"LLM Model: {model_name}")
     logger.info(f"Embedding Model: {embedding_model}\n")
+    logger.info(f"Rerank Model: {rerank_model}\n")
 
     memory_config = get_config(
         database_name=database_name, 
         collection_name=collection_name, 
         model_name=model_name, 
-        embedding_model=embedding_model
+        embedding_model=embedding_model,
+        rerank_model=rerank_model
     )
     client = get_openai_client()
 
-    init_milvus_db(memory_config)
+    if vector_store == "milvus":
+        init_milvus_db(memory_config)
 
     memory = Memory.from_config(memory_config)
     logger.info("[Memory Instance Config]")
@@ -330,9 +397,14 @@ def main_llm_mem0():
         logger.info(f"Round {i} Human: {entry['human']}")
         logger.info(f"Round {i} AI: {entry['ai']}")
 
-    logger.info("Cleaning up Milvus DB...")
-    clean_up_milvus_db(memory_config)
-    logger.info("Milvus DB cleanup complete.")
+    if vector_store == "milvus":
+        logger.info("Cleaning up Milvus DB...")
+        clean_up_milvus_db(memory_config)
+        logger.info("Milvus DB cleanup complete.")
+    elif vector_store == "redis":
+        logger.info("Cleaning up Redis DB...")
+        clean_up_redis_db(memory_config)
+        logger.info("Redis DB cleanup complete.")
 
 
 ## llm+stm2
@@ -381,8 +453,8 @@ def main_llm_stm():
         logger.info(f"Round {i} AI: {entry['ai']}")
 
 if __name__ == "__main__":
-    # main_llm_mem0()
-    main_llm_stm()
+    main_llm_mem0(vector_store="redis")
+    # main_llm_stm()
 
 
 

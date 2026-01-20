@@ -7,10 +7,12 @@ services:
     environment:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - MILVUS_URI=http://milvus-standalone:19530
+      - REDIS_URI=redis://redis-stack:6379
     volumes:
       - ./src:/app
     depends_on:
       - milvus-standalone
+      - redis-stack
     # Keep container running so you can exec into it
     command: tail -f /dev/null
 
@@ -66,6 +68,25 @@ services:
       - "3000:3000"
     depends_on:
       - milvus-standalone
+
+  redis-stack:
+    image: redis/redis-stack:latest
+    container_name: redis-stack
+    ports:
+      - "6379:6379"
+      - "8001:8001"
+    volumes:
+      - ${DOCKER_VOLUME_DIRECTORY:-.}/volumes/redis-stack:/data
+
+  redisinsight:
+    image: redislabs/redisinsight:latest
+    container_name: redisinsight
+    ports:
+      - "5540:5540"
+    depends_on:
+      - redis-stack
+    environment:
+      - REDIS_URI=redis://redis-stack:6379 # 需要手動到 web UI 添加連接
 
 networks:
   default:
