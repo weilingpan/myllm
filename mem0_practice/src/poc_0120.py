@@ -114,7 +114,8 @@ def get_config(
                 "url": os.environ.get("MILVUS_URI", "http://milvus-standalone:19530"),
                 "token": "",
                 "db_name": database_name,
-                # "enable_vision"
+                # "enable_vision",
+                "embedding_model_dims": 1024,
             },
         },
         # #https://github.com/mem0ai/mem0/blob/main/mem0/configs/llms
