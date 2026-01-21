@@ -3,7 +3,7 @@ import time
 import logging
 from openai import OpenAI
 from pymilvus import connections, db
-
+import redis
 
 os.environ["MEM0_TELEMETRY"] = "false"
 from mem0 import Memory
@@ -43,7 +43,9 @@ def get_config(
         database_name: str, 
         collection_name: str,
         model_name: str,
-        embedding_model: str):
+        embedding_model: str,
+        vector_store: str
+    ):
     
     # custom_extraction_prompt = None
 
@@ -105,9 +107,9 @@ def get_config(
 
     custom_update_memory_prompt = None
 
-    return {
+    if vector_store == "milvus":
         # https://github.com/mem0ai/mem0/blob/dba7f0458aeb50aa7078d36eaefa2405afbee620/mem0/configs/vector_stores/milvus.py#L22
-        "vector_store": {
+        vector_store_config = {
             "provider": "milvus",
             "config": {
                 "collection_name": collection_name,
@@ -117,7 +119,20 @@ def get_config(
                 # "enable_vision",
                 "embedding_model_dims": 1024,
             },
-        },
+        }
+    elif vector_store == "redis":
+        # Redis 向量搜尋預設回傳的是距離，距離越小越相關
+        vector_store_config = {
+            "provider": "redis",
+            "config": {
+                "collection_name": collection_name,
+                "redis_url": os.environ.get("REDIS_URI", "redis://redis-stack:6379/0"),
+                # "embedding_model_dims": 1536,
+            }
+        }
+
+    return {
+        "vector_store": vector_store_config,
         # #https://github.com/mem0ai/mem0/blob/main/mem0/configs/llms
         "llm": {
             "provider": "vllm",
@@ -185,6 +200,28 @@ def clean_up_milvus_db(config):
         except Exception as e:
             logger.warning(f"Failed to clean up Milvus database: {e}")
 
+
+
+def clean_up_redis_db(config):
+    redis_config = config["vector_store"]["config"]
+    redis_url = redis_config["redis_url"]
+
+    try:
+        logger.info(f"Connecting to Redis at {redis_url} for cleanup...")
+        r = redis.from_url(redis_url)
+
+        # List all keys in Redis
+        keys = r.keys('*')
+        for key in keys:
+            key_str = key.decode('utf-8')
+            logger.info(f"Deleting key: {key_str}")
+            r.delete(key_str)
+
+        logger.info("Redis database cleanup complete.")
+    except Exception as e:
+        logger.warning(f"Failed to clean up Redis database: {e}")
+
+
 def add_memory(m, user_id: str, content: str):
     logger.info(f"Try to add memory for user '{user_id}': {content}")
     res = m.add(
@@ -214,12 +251,26 @@ def add_memory(m, user_id: str, content: str):
     return res
 
 
-def get_memory(m, user_id: str):
+def get_memory_milvus(m, user_id: str):
     # get all memories for user
     memories = m.get_all(user_id=user_id)
     # print(f"\n目前記憶內容:\n{memories}")
     return memories
 
+def get_memory_redis(m, user_id: str, filters: dict):
+    REDISHOST = "172.18.246.170"
+    REDISPORT = 31379
+    REDISDB = 0
+    redis_client = redis.Redis(host=REDISHOST, port=REDISPORT, db=REDISDB)
+    for key in redis_client.scan_iter(match='mem0:test_mem0_collection*'):
+       hash_values = redis_client.hgetall(key)
+       if hash_values and hash_values.get(b'user_id') == str(user_id).encode():
+            print(key)
+
+    # get all memories for user
+    memories = m.get_all(user_id=user_id, filters=filters)
+    print(f"\n目前記憶內容:\n{memories}")
+    return memories
 
 def search_memory(m, user_id: str, query: str, top_k: int = 5):
     # def search(
@@ -246,13 +297,19 @@ def chat_with_memory(
         m,
         user_id: str,
         text: str,
-        model_name: str):
+        model_name: str,
+        vector_store: str):
     system_prompt = f"You are a helpful AI."
 
-    memories = get_memory(m, user_id)
+    if vector_store == "milvus":
+        memories = get_memory_milvus(m, user_id)
+    elif vector_store == "redis":
+        filters = {"user_id": user_id}
+        memories = get_memory_redis(m, user_id=user_id, filters=filters)
 
     existing_memory = memories.get("results", [])
     logger.info(f"Existing memories count: {len(existing_memory)}")
+    st = time.time()
     if len(existing_memory) > 0:
         logger.info("Searching for relevant memories...")
         relevant_memories = search_memory(m, user_id, text)
@@ -264,6 +321,8 @@ def chat_with_memory(
                 "You are a helpful AI. Answer the question based on query and memories.\n"
                 f"User memories:\n{memories}\n"
             )
+    et = time.time()
+    logger.info(f"Memory search took {et - st:.2f} seconds")
 
     logger.info(f"System Prompt: {system_prompt}")
     response = client.chat.completions.create(
@@ -304,7 +363,7 @@ def chat_with_stm(
     return response.choices[0].message.content
 
 ## llm + mem0
-def main_llm_mem0():
+def main_llm_mem0(vector_store: str = "milvus", async_mode: bool = False):
     logger.info(f"\n{'='*20} LLM + Mem0 {'='*20}\n")
     base_url = os.environ.get("LLAMA_BASE_URL")
     database_name = "test_mem0_db"
@@ -322,11 +381,13 @@ def main_llm_mem0():
         database_name=database_name, 
         collection_name=collection_name, 
         model_name=model_name, 
-        embedding_model=embedding_model
+        embedding_model=embedding_model,
+        vector_store=vector_store
     )
     client = get_openai_client(base_url)
-
-    init_milvus_db(memory_config)
+    
+    if vector_store == "milvus":
+        init_milvus_db(memory_config)
 
     memory = Memory.from_config(memory_config)
     logger.info("[Memory Instance Config]")
@@ -355,7 +416,7 @@ def main_llm_mem0():
         logger.info("\n" + "=" * 50)
         logger.info(f"[{question_count}] Human Question:\n{question}")
         question = question.encode('utf-8', 'ignore').decode('utf-8', 'ignore')
-        response = chat_with_memory(client, memory, user_id, question, model_name)
+        response = chat_with_memory(client, memory, user_id, question, model_name, vector_store)
         history.append({"human": question, "ai": response})
         logger.info(f"[{question_count}] AI Response:\n{response}")
         add_memory(memory, user_id, question)
@@ -367,9 +428,14 @@ def main_llm_mem0():
         logger.info(f"Round {i} Human: {entry['human']}")
         logger.info(f"Round {i} AI: {entry['ai']}")
 
-    logger.info("Cleaning up Milvus DB...")
-    clean_up_milvus_db(memory_config)
-    logger.info("Milvus DB cleanup complete.")
+    if vector_store == "milvus":
+        logger.info("Cleaning up Milvus DB...")
+        clean_up_milvus_db(memory_config)
+        logger.info("Milvus DB cleanup complete.")
+    # elif vector_store == "redis":
+    #     logger.info("Cleaning up Redis DB...")
+    #     clean_up_redis_db(memory_config)
+    #     logger.info("Redis DB cleanup complete.")
 
 
 ## llm+stm2
@@ -421,7 +487,7 @@ def main_llm_stm():
         logger.info(f"Round {i} AI: {entry['ai']}")
 
 if __name__ == "__main__":
-    main_llm_mem0()
+    main_llm_mem0(vector_store="redis")
     # main_llm_stm()
 
 
