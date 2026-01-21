@@ -1,9 +1,12 @@
 import os
 import time
+import redis
 import logging
+import numpy as np
 from openai import OpenAI
 from pymilvus import connections, db
-import redis
+from redisvl.index import SearchIndex
+from redisvl.query import VectorQuery
 
 os.environ["MEM0_TELEMETRY"] = "false"
 from mem0 import Memory
@@ -38,12 +41,19 @@ def get_openai_client(base_url: str = None):
         return OpenAI(api_key=OPENAI_API_KEY, base_url=base_url)
     return OpenAI(api_key=OPENAI_API_KEY)
 
+def get_embedding(text, client, model_name):
+    response = client.embeddings.create(
+        model=model_name,
+        input=text
+    )
+    return response.data[0].embedding
 
 def get_config(
         database_name: str, 
         collection_name: str,
         model_name: str,
         embedding_model: str,
+        rerank_model: str,
         vector_store: str
     ):
     
@@ -117,7 +127,7 @@ def get_config(
                 "token": "",
                 "db_name": database_name,
                 # "enable_vision",
-                "embedding_model_dims": 1024,
+                # "embedding_model_dims": 1024,
             },
         }
     elif vector_store == "redis":
@@ -127,34 +137,56 @@ def get_config(
             "config": {
                 "collection_name": collection_name,
                 "redis_url": os.environ.get("REDIS_URI", "redis://redis-stack:6379/0"),
-                # "embedding_model_dims": 1536,
+                # "embedding_model_dims": 1024, #TODO: !!!!!!! 可能會影響查詢結果 !!!!!
             }
         }
 
-    return {
-        "vector_store": vector_store_config,
-        # #https://github.com/mem0ai/mem0/blob/main/mem0/configs/llms
-        "llm": {
+    env = os.environ.get("ENV", "home_practice")
+    if env == "home_practice":
+        llm_config = {
+            "provider": "openai",
+            "config": {
+                "model": model_name,
+            }
+        }
+        embedding_config = {
+            "provider": "openai",
+            "config": {
+                "model": embedding_model,
+            }
+        }
+        reranker_config = {
+            "provider": "openai",
+            "config": {
+                "model": rerank_model,
+            }
+        }
+    else:
+        llm_config = {
             "provider": "vllm",
             "config": {
                 "model": model_name,
                 "vllm_base_url": os.environ.get("LLAMA_BASE_URL"),
             }
-        },
-        #https://github.com/mem0ai/mem0/blob/dba7f0458aeb50aa7078d36eaefa2405afbee620/mem0/configs/embeddings/base.py#L10
-        "embedder": {
+        }
+
+        embedding_config = {
             "provider": "huggingface",
             "config": {
                 "model": embedding_model,
                 "huggingface_base_url": os.environ.get("HUGGINGFACE_URL"),  # 指定 embedding gateway URL
             }
-        },
+        }
+
+        reranker_config = None
+
+    return {
+        "vector_store": vector_store_config,
+        "llm": llm_config,
+        "embedder": embedding_config,
         "custom_fact_extraction_prompt": custom_extraction_prompt,
         "custom_update_memory_prompt": custom_update_memory_prompt,
-        # "reanker": {
-        #     "provider": "",
-        #     "config": {}
-        # },
+        "reanker": reranker_config,
         "version": "v1.1",
     }
 
@@ -257,19 +289,24 @@ def get_memory_milvus(m, user_id: str):
     # print(f"\n目前記憶內容:\n{memories}")
     return memories
 
-def get_memory_redis(m, user_id: str, filters: dict):
-    REDISHOST = "172.18.246.170"
-    REDISPORT = 31379
-    REDISDB = 0
-    redis_client = redis.Redis(host=REDISHOST, port=REDISPORT, db=REDISDB)
-    for key in redis_client.scan_iter(match='mem0:test_mem0_collection*'):
-       hash_values = redis_client.hgetall(key)
-       if hash_values and hash_values.get(b'user_id') == str(user_id).encode():
-            print(key)
+def get_memory_redis(m, user_id: str, filters: dict) -> dict:
+    # env = os.environ.get("ENV", "home_practice")
+    # if env == "home_practice":
+    #     REDISHOST = "redis-stack"
+    #     REDISPORT = 6379
+    #     REDISDB = 0
+    # else:
+    #     REDISHOST = "172.18.246.170"
+    #     REDISPORT = 31379
+    #     REDISDB = 0
+    # redis_client = redis.Redis(host=REDISHOST, port=REDISPORT, db=REDISDB)
+    # keys = list(redis_client.scan_iter(match=f'mem0:{user_id}*'))
+    # logger.info(f"Total {len(keys)} keys in Redis for user_id: {user_id}")
+    # return {'results': keys}
 
     # get all memories for user
     memories = m.get_all(user_id=user_id, filters=filters)
-    print(f"\n目前記憶內容:\n{memories}")
+    # print(f"\n目前記憶內容:\n{memories}")
     return memories
 
 def search_memory(m, user_id: str, query: str, top_k: int = 5):
@@ -285,6 +322,68 @@ def search_memory(m, user_id: str, query: str, top_k: int = 5):
     #     threshold: Optional[float] = None,
     #     rerank: bool = True,
     # ):
+    # env = os.environ.get("ENV", "home_practice")
+    # if env == "home_practice":
+    #     REDISHOST = "redis-stack"
+    #     REDISPORT = 6379
+    #     REDISDB = 0
+    # else:
+    #     REDISHOST = "172.18.246.170"
+    #     REDISPORT = 31379
+    #     REDISDB = 0
+    # # redis_client = redis.Redis(host=REDISHOST, port=REDISPORT, db=REDISDB)
+    # redis_uri = f"redis://{REDISHOST}:{REDISPORT}/{REDISDB}"
+    # query_embedding = get_embedding(query, get_openai_client(), os.environ.get("EMBEDDING_MODEL"))
+    # # logger.info(f"Query: {query}")
+    # # logger.info(f"Query Embedding: {query_embedding[:5]}... (len={len(query_embedding)})")
+    
+    # DEFAULT_FIELDS = [
+    #     {"name": "memory_id", "type": "tag"},
+    #     {"name": "hash", "type": "tag"},
+    #     {"name": "agent_id", "type": "tag"},
+    #     {"name": "run_id", "type": "tag"},
+    #     {"name": "user_id", "type": "tag"},
+    #     {"name": "memory", "type": "text"},
+    #     {"name": "metadata", "type": "text"},
+    #     {"name": "created_at", "type": "numeric"},
+    #     {"name": "updated_at", "type": "numeric"},
+    #     {
+    #         "name": "embedding",
+    #         "type": "vector",
+    #         "attrs": {"distance_metric": "cosine", "algorithm": "flat", "datatype": "float32"},
+    #     },
+    # ]
+
+    # index_schema = {
+    #     "name": user_id,
+    #     "prefix": f"mem0:{user_id}",
+    # }
+    # fields = DEFAULT_FIELDS.copy()
+    # fields[-1]["attrs"]["dims"] = 1024  # embedding dimension
+    # schema = {"index": index_schema, "fields": fields}
+    # client = redis.Redis.from_url(redis_uri)
+    # index = SearchIndex.from_dict(schema)
+    # index.set_client(client)
+    # index.create(overwrite=True)
+    # v = VectorQuery(
+    #     vector=np.array(query_embedding, dtype=np.float32).tobytes(),
+    #     vector_field_name="embedding",
+    #     return_fields=[
+    #         "memory_id", 
+    #         "hash", 
+    #         "agent_id", 
+    #         "run_id", 
+    #         "user_id", 
+    #         "memory", 
+    #         "metadata", 
+    #         "created_at"
+    #     ],
+    #     num_results=top_k,
+    # )
+    # results = index.query(v)
+    # print(f"\n搜尋到 {len(results)} 筆相關記憶")
+    # return {'results': results}
+
     memories = m.search(query=query, user_id=user_id)
     logger.info(f"Relevant memories for the query '{query}':")
     for i, entry in enumerate(memories.get("results", []), start=1):
@@ -321,6 +420,8 @@ def chat_with_memory(
                 "You are a helpful AI. Answer the question based on query and memories.\n"
                 f"User memories:\n{memories}\n"
             )
+        else:
+            logger.info("No relevant memories found.")
     et = time.time()
     logger.info(f"Memory search took {et - st:.2f} seconds")
 
@@ -364,24 +465,38 @@ def chat_with_stm(
 
 ## llm + mem0
 def main_llm_mem0(vector_store: str = "milvus", async_mode: bool = False):
-    logger.info(f"\n{'='*20} LLM + Mem0 {'='*20}\n")
+    logger.info(f"\n{'='*20} LLM + Mem0 {'='*20}")
+
+    user_icon = "👤"
+    bot_icon = "🤖"
+    user_id = input(f"\n{user_icon} Please enter your name: ").strip() or "User"
+    logger.info(f"{bot_icon} Welcome, {user_id}! Type 'exit' to end the conversation.")
+
     base_url = os.environ.get("LLAMA_BASE_URL")
     database_name = "test_mem0_db"
-    collection_name = "test_mem0_collection"
+    if vector_store == "milvus":
+        collection_name = "test_mem0_collection"
+    elif vector_store == "redis":
+        collection_name = user_id
+
     model_name = os.environ.get("MODEL_NAME")
     embedding_model = os.environ.get("EMBEDDING_MODEL")
+    rerank_model =  os.environ.get("RERANK_MODEL")
 
     logger.info("Initializing Memory with Milvus backend...")
     logger.info(f"Database Name: {database_name}")
     logger.info(f"Collection Name: {collection_name}")
+    logger.info(f"Base URL: {base_url}")
     logger.info(f"LLM Model: {model_name}")
-    logger.info(f"Embedding Model: {embedding_model}\n")
+    logger.info(f"Embedding Model: {embedding_model}")
+    logger.info(f"Rerank Model: {rerank_model}\n")
 
     memory_config = get_config(
         database_name=database_name, 
         collection_name=collection_name, 
         model_name=model_name, 
         embedding_model=embedding_model,
+        rerank_model=rerank_model,
         vector_store=vector_store
     )
     client = get_openai_client(base_url)
@@ -396,21 +511,54 @@ def main_llm_mem0(vector_store: str = "milvus", async_mode: bool = False):
     else:
         logger.info(vars(memory))
 
-    user_icon = "👤"
-    bot_icon = "🤖"
-    user_id = input(f"\n{user_icon} Please enter your name: ").strip() or "User"
-    logger.info(f"{bot_icon} Welcome, {user_id}! Type 'exit' to end the conversation.")
-
     question_count = 1
     history = []  # 記錄 human/ai 對話
-    preset_questions = [
-        "我最喜歡的水果是蘋果",          # 關鍵
-        "我不太喜歡吃太甜的水果",        # 關鍵偏好
-        "你覺得水果每天吃好嗎？",        # 無關
-        "很多人早餐會吃水果，你怎麼看？", # 無關
-        "最近天氣變熱了",                # 干擾
-        "幫我推薦一種「適合我」的水果"
-    ]
+
+    if user_id.lower() == "user1":
+        preset_questions = [
+            "我的名字是Amy",
+            "我不太喜歡吃太甜的水果",
+            "我最喜歡的水果是芭樂",
+            "你覺得水果每天吃好嗎？",
+            "很多人早餐會吃水果，你怎麼看？",
+            "最近天氣變熱了",
+            "幫我推薦一種「適合我」的水果",
+            "請問我叫什麼名字?"
+        ]
+    elif user_id.lower() == "user2":
+        preset_questions = [
+            "我的名字是Lily",
+            "我喜歡吃甜的水果",
+            "我最喜歡的水果是哈密瓜",
+            "你覺得水果每天吃好嗎？",
+            "很多人早餐會吃水果，你怎麼看？",
+            "最近寒流很冷",
+            "幫我推薦一種「適合我」的水果",
+            "請問我叫什麼名字?"
+        ]
+    else:
+        preset_questions = [
+            "你好，我叫Alex，我喜歡旅遊和攝影。",
+            "我最近在學習烹飪，特別是義大利料理。",
+            "我有一隻貓，牠的名字叫做Milo，牠很調皮。",
+            "我計劃下個月去義大利旅行，想去羅馬和威尼斯。",
+            "請問我叫什麼名字?"
+        ]
+
+    # preset_questions = [
+    #     f"你好，我叫{user_id}，我目前在台北的一家科技公司擔任前端工程師。",
+    #     "我最近開始學習 Python，因為我想把 AI 功能整合到我們的產品中。",
+    #     "我對海鮮過敏，所以聚餐時我通常只吃素食或牛排。",
+    #     "我有一隻叫「麻糬」的柴犬，牠每天早上 6 點就會吵著要出門散步。",
+    #     "其實我最近換工作了，我現在轉職成了後端工程師，主要用 Go 語言。",
+    #     "下週我要去日本東京出差，我想在那邊找幾間好吃的素食餐廳。",
+    #     "最近「麻糬」變得很懶，現在都要到 8 點才肯起床，真拿牠沒辦法。",
+    #     "我正在考慮把我的筆電換成 Mac，因為 Go 的開發環境好像比較方便。",
+    #     "我發現我上次說錯了，我不是對海鮮過敏，我是對「蝦蟹類」過敏，魚肉是可以吃的", # add feedback
+    #     "幫我規劃一下東京出差的晚餐。", # add feedback
+    #     "其實「麻糬」上個月送給住在南部的親戚養了，我現在家裡沒有寵物。",
+    #     "你還記得我養的是什麼狗，以及我現在主要用什麼程式語言工作嗎？"
+    # ]
 
     for question in preset_questions:
         logger.info("\n" + "=" * 50)
@@ -428,10 +576,10 @@ def main_llm_mem0(vector_store: str = "milvus", async_mode: bool = False):
         logger.info(f"Round {i} Human: {entry['human']}")
         logger.info(f"Round {i} AI: {entry['ai']}")
 
-    if vector_store == "milvus":
-        logger.info("Cleaning up Milvus DB...")
-        clean_up_milvus_db(memory_config)
-        logger.info("Milvus DB cleanup complete.")
+    # if vector_store == "milvus":
+    #     logger.info("Cleaning up Milvus DB...")
+    #     clean_up_milvus_db(memory_config)
+    #     logger.info("Milvus DB cleanup complete.")
     # elif vector_store == "redis":
     #     logger.info("Cleaning up Redis DB...")
     #     clean_up_redis_db(memory_config)
@@ -487,7 +635,7 @@ def main_llm_stm():
         logger.info(f"Round {i} AI: {entry['ai']}")
 
 if __name__ == "__main__":
-    main_llm_mem0(vector_store="redis")
+    main_llm_mem0(vector_store="redis", async_mode=False)
     # main_llm_stm()
 
 
