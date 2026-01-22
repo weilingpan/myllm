@@ -12,6 +12,7 @@ services:
       - EMBEDDING_MODEL=${EMBEDDING_MODEL:-text-embedding-3-small}
       - RERANK_MODEL=${RERANK_MODEL:-GPT-4o-mini}
       - ENV=home_practice
+      - MEM0_TELEMETRY=false
     volumes:
       - ./src:/app
     depends_on:
@@ -19,6 +20,30 @@ services:
       - redis-stack
     # Keep container running so you can exec into it
     command: tail -f /dev/null
+    # python mem0_job.py
+
+  mem0_api:
+    image: mem0_practice-mem0:latest
+    container_name: mem0_api
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - MILVUS_URI=http://milvus-standalone:19530
+      - REDIS_URI=redis://redis-stack:6379
+      - MODEL_NAME=${MODEL_NAME:-gpt-5.2-2025-12-11}
+      - EMBEDDING_MODEL=${EMBEDDING_MODEL:-text-embedding-3-small}
+      - RERANK_MODEL=${RERANK_MODEL:-GPT-4o-mini}
+      - ENV=home_practice
+      - MEM0_TELEMETRY=false
+    volumes:
+      - ./src:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - milvus-standalone
+      - redis-stack
+    # Keep container running so you can exec into it
+    command: tail -f /dev/null
+    # python mem0_api.py
 
   etcd:
     container_name: milvus-etcd
