@@ -357,7 +357,7 @@ async def main_llm_mem0(vector_store: str = "milvus", async_mode: bool = False):
         # "其實「麻糬」上個月送給住在南部的親戚養了，我現在家裡沒有寵物。"
         # "你還記得我養的是什麼狗，以及我現在主要用什麼程式語言工作嗎？"
     ]
-    preset_questions = ["我也喜歡apple"]
+    # preset_questions = ["我也喜歡apple"]
 
     user_feedbacks = {}
     # user_feedbacks = {
