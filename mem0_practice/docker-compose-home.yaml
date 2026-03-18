@@ -1,0 +1,84 @@
+version: '3.5'
+
+services:
+  app:
+    # build: .
+    container_name: mem0_app
+    image: mem0_practice-app
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - MILVUS_URI=http://milvus-standalone:19530
+      - REDIS_URI=redis://redis-stack:6379
+      - MODEL_NAME=${MODEL_NAME:-gpt-5.2-2025-12-11}
+      - EMBEDDING_MODEL=${EMBEDDING_MODEL:-text-embedding-3-small}
+      - RERANK_MODEL=${RERANK_MODEL:-GPT-4o-mini}
+      - ENV=home_practice
+    volumes:
+      - ./src:/app
+    depends_on:
+      - redis-stack
+    # Keep container running so you can exec into it
+    command: tail -f /dev/null
+
+  redis-stack:
+    image: redis/redis-stack:latest
+    container_name: redis-stack
+    ports:
+      - "6379:6379"
+      - "8001:8001"
+    env_file:
+      - .env
+    volumes:
+      - ${DOCKER_VOLUME_DIRECTORY:-.}/volumes/redis-stack:/data
+      - ./redis.conf:/etc/redis/redis.conf:ro
+    command: ["redis-server", "/etc/redis/redis.conf"]
+    # 不用 redis.conf 時：通常會走 image 預設啟動流程（內建 redis-stack.conf），裡面已經有 loadmodule ...，所以能讀含 module 資料的 dump.rdb。
+    # 如果改用自定義 redis.conf，請確保裡面有正確的 loadmodule 指令，並且在啟動命令中指定該配置檔。
+    deploy:
+      resources:
+        limits:
+          memory: 256MB
+
+  redisinsight:
+    image: redislabs/redisinsight:latest
+    container_name: redisinsight
+    ports:
+      - "5540:5540"
+    depends_on:
+      - redis-stack
+    environment:
+      - REDIS_URI=redis://redis-stack:6379 # 需要手動到 web UI 添加連接
+
+  # grafana dashboard: https://grafana.com/grafana/dashboards/11835-redis-dashboard-for-prometheus-redis-exporter-helm-stable-redis-ha/
+  # grafana dashboard: https://dev.to/woovi/prometheus-redis-simple-guide-to-monitor-redis-instances-n1f
+  # grafama dashboard: https://grafana.com/grafana/dashboards/14091-redis-dashboard-for-prometheus-redis-exporter-1-x/
+  redis_exporter:
+    image: oliver006/redis_exporter
+    environment:
+      REDIS_ADDR: "redis://redis-stack:6379"
+      COLLECT_SEARCH_INDEXES_METRICS: "true"     # 抓 FT.INFO（vector index 統計）
+      INCL_MODULES_METRICS: "true"               # 抓 RedisSearch/JSON module 資訊
+      INCL_SYSTEM_METRICS: "true"                # 抓 total_system_memory 等系統指標
+      EXPORT_CLIENT_LIST: "true"                 # 抓每個 client 連線細節
+    ports:
+      - "9121:9121"
+
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    depends_on:
+      - redis_exporter
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+
+
+# cd ~/myllm/mem0_practice
+# docker compose -f docker-compose-home.yaml --env-file .env up -d
+# docker exec -it mem0_app bash
+# python poc_async.py

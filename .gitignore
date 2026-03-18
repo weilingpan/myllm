@@ -5,3 +5,9 @@ db
 __pycache__
 volumes
 .env
+mem0-main
+
+# Ignore log files
+*.log
+logs/
+*.tar

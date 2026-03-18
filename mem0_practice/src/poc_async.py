@@ -22,7 +22,7 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s %(levelname)s [%(filename)s] %(message)s',
     datefmt='%Y-%m-%d %H:%M:%S',
-    handlers=[logging.FileHandler(log_path, encoding="utf-8"), logging.StreamHandler()]
+    # handlers=[logging.FileHandler(log_path, encoding="utf-8"), logging.StreamHandler()]
 )
 logger = logging.getLogger(__name__)
 logger.info(f"Running file: {os.path.abspath(sys.argv[0])}")
@@ -48,7 +48,7 @@ def get_config(
         rerank_model: str = None,
     ):
     
-    # custom_extraction_prompt = None
+    custom_extraction_prompt = None
 
     # custom_extraction_prompt = """
     # If it contains long-term useful information about the user's preferences, identity, or status, extract it.
@@ -72,28 +72,28 @@ def get_config(
     # Return the facts and customer information in a json format as shown above.
     # """
 
-    custom_extraction_prompt = """
-    If it contains long-term useful information about the user's preferences, identity, or status, extract it.
-    If not, output \"None\".
-    Only output the extracted facts, do not explain
+    # custom_extraction_prompt = """
+    # If it contains long-term useful information about the user's preferences, identity, or status, extract it.
+    # If not, output \"None\".
+    # Only output the extracted facts, do not explain
 
-    Input: Hi.
-    Output: {{"facts" : []}}
+    # Input: Hi.
+    # Output: {{"facts" : []}}
 
-    Input: The weather is nice today.
-    Output: {{"facts" : []}}
+    # Input: The weather is nice today.
+    # Output: {{"facts" : []}}
 
-    Input: My order #12345 hasn't arrived yet.
-    Output: {{"facts" : ["Order #12345 not received"]}}
+    # Input: My order #12345 hasn't arrived yet.
+    # Output: {{"facts" : ["Order #12345 not received"]}}
 
-    Input: I'm John Doe, and I'd like to return the shoes I bought last week.
-    Output: {{"facts" : ["Customer name: John Doe", "Wants to return shoes", "Purchase made last week"]}}
+    # Input: I'm John Doe, and I'd like to return the shoes I bought last week.
+    # Output: {{"facts" : ["Customer name: John Doe", "Wants to return shoes", "Purchase made last week"]}}
 
-    Input: I ordered a red shirt, size medium, but received a blue one instead.
-    Output: {{"facts" : ["Ordered red shirt, size medium", "Received blue shirt instead"]}}
+    # Input: I ordered a red shirt, size medium, but received a blue one instead.
+    # Output: {{"facts" : ["Ordered red shirt, size medium", "Received blue shirt instead"]}}
 
-    Return the facts and customer information in a json format as shown above.
-    """
+    # Return the facts and customer information in a json format as shown above.
+    # """
 
     # custom_extraction_prompt = """
     # Extract key facts from the conversation focusing on:
@@ -202,7 +202,7 @@ async def search_memory(async_memory, user_id: str, query: str, limit: int = 100
         logger.info(f"- {entry['memory']} (Score: {entry['score']})")
     return memories
 
-async def add_memory(async_memory, user_id: str, content: str):
+async def add_memory(async_memory, user_id: str, content: str|list, agent_id: str = None):
     # def add(
     #     self,
     #     messages,
@@ -216,11 +216,20 @@ async def add_memory(async_memory, user_id: str, content: str):
     #     prompt: Optional[str] = None,
     # )
     logger.info(f"Try to add memory for user '{user_id}': {content}")
-    res = await async_memory.add(
-        messages=content,
-        user_id=user_id,
-        metadata={"category": "fact"},
-    )
+    if agent_id:
+        res = await async_memory.add(
+            messages=content,
+            user_id=user_id,
+            agent_id=agent_id,
+            memory_type="procedural_memory",
+            metadata={"category": "fact"},
+        )
+    else:
+        res = await async_memory.add(
+            messages=content,
+            user_id=user_id,
+            metadata={"category": "fact"},
+        )
     """memory.add messages vs metadata 差異
     - messages:
         - 影響語意搜尋的結果
@@ -290,7 +299,7 @@ async def chat_with_memory(
 
 async def main_llm_mem0(vector_store: str = "milvus", async_mode: bool = False):
     database_name = "test_mem0_db"
-    collection_name = "test_mem0_collection"
+    collection_name = "test_mem0_collection_both3"
     model_name = "gpt-5.2-2025-12-11"
     embedding_model = "text-embedding-3-large"
     rerank_model = "GPT-4o-mini"
@@ -325,25 +334,36 @@ async def main_llm_mem0(vector_store: str = "milvus", async_mode: bool = False):
 
     question_count = 1
     history = []  # 記錄 human/ai 對話
-    preset_questions = [
-        f"你好，我叫{user_id}，我目前在台北的一家科技公司擔任前端工程師。",
-        "我最近開始學習 Python，因為我想把 AI 功能整合到我們的產品中。",
-        "我對海鮮過敏，所以聚餐時我通常只吃素食或牛排。",
-        "我有一隻叫「麻糬」的柴犬，牠每天早上 6 點就會吵著要出門散步。",
-        "其實我最近換工作了，我現在轉職成了後端工程師，主要用 Go 語言。",
-        "下週我要去日本東京出差，我想在那邊找幾間好吃的素食餐廳。",
-        "最近「麻糬」變得很懶，現在都要到 8 點才肯起床，真拿牠沒辦法。",
-        "我正在考慮把我的筆電換成 Mac，因為 Go 的開發環境好像比較方便。",
-        "我發現我上次說錯了，我不是對海鮮過敏，我是對「蝦蟹類」過敏，魚肉是可以吃的", # add feedback
-        "幫我規劃一下東京出差的晚餐。", # add feedback
-        "其實「麻糬」上個月送給住在南部的親戚養了，我現在家裡沒有寵物。",
-        "你還記得我養的是什麼狗，以及我現在主要用什麼程式語言工作嗎？"
-    ]
+    # preset_questions = [
+    #     f"你好，我叫{user_id}，我目前在台北的一家科技公司擔任前端工程師。",
+    #     "我最近開始學習 Python，因為我想把 AI 功能整合到我們的產品中。",
+    #     "我對海鮮過敏，所以聚餐時我通常只吃素食或牛排。",
+    #     "我有一隻叫「麻糬」的柴犬，牠每天早上 6 點就會吵著要出門散步。",
+    #     "其實我最近換工作了，我現在轉職成了後端工程師，主要用 Go 語言。",
+    #     "下週我要去日本東京出差，我想在那邊找幾間好吃的素食餐廳。",
+    #     "最近「麻糬」變得很懶，現在都要到 8 點才肯起床，真拿牠沒辦法。",
+    #     "我正在考慮把我的筆電換成 Mac，因為 Go 的開發環境好像比較方便。",
+    #     "我發現我上次說錯了，我不是對海鮮過敏，我是對「蝦蟹類」過敏，魚肉是可以吃的", # add feedback
+    #     "幫我規劃一下東京出差的晚餐。", # add feedback
+    #     "其實「麻糬」上個月送給住在南部的親戚養了，我現在家裡沒有寵物。",
+    #     "你還記得我養的是什麼狗，以及我現在主要用什麼程式語言工作嗎？"
+    # ]
 
-    user_feedbacks = {
-        9: "非常重要且正確",
-        10: "不對，你提到的餐廳仍有過敏源"
-    }
+    preset_questions = [
+        f"你好，我叫{user_id}, 我有一隻叫「麻糬」的柴犬",
+        "我最喜歡的水果是香蕉",
+        "我最近開始學習 Python，因為我想把 AI 功能整合到我們的產品中。",
+        "我昨天跟lily去吃飯了",
+        # "其實「麻糬」上個月送給住在南部的親戚養了，我現在家裡沒有寵物。"
+        # "你還記得我養的是什麼狗，以及我現在主要用什麼程式語言工作嗎？"
+    ]
+    preset_questions = ["我也喜歡apple"]
+
+    user_feedbacks = {}
+    # user_feedbacks = {
+    #     9: "非常重要且正確",
+    #     10: "不對，你提到的餐廳仍有過敏源"
+    # }
 
     for question in preset_questions:
         logger.info("=" * 50)
@@ -352,7 +372,7 @@ async def main_llm_mem0(vector_store: str = "milvus", async_mode: bool = False):
         response = await chat_with_memory(asyncclient, async_memory, user_id, question, model_name)
         history.append({"human": question, "ai": response})
         logger.info(f"[Round {question_count}] AI Response:\n{response}")
-        await add_memory(async_memory, user_id, question)
+        # await add_memory(async_memory, user_id, question)
         if question_count in user_feedbacks.keys():
             feedback = user_feedbacks[question_count]
             context = f"User Message: {question}\nLLM Response: {response}\nUser Feedback: {feedback}"
@@ -366,10 +386,24 @@ async def main_llm_mem0(vector_store: str = "milvus", async_mode: bool = False):
         logger.info(f"Round {i} Human: {entry['human']}")
         logger.info(f"Round {i} AI: {entry['ai']}")
 
-    if vector_store == "redis":
-        logger.info("Cleaning up Redis DB...")
-        clean_up_redis_db(memory_config)
-        logger.info("Redis DB cleanup complete.")
+    logger.info("Adding conversation history to memory ...")
+    for i, entry in enumerate(history, 1):
+        conversations = [
+            {"role": "user", "content": entry['human']},
+            {"role": "assistant", "content": entry['ai']},
+        ]
+        await add_memory(
+            async_memory, 
+            user_id=user_id, 
+            content=conversations, 
+            agent_id="test_agent"
+        )
+
+
+    # if vector_store == "redis":
+    #     logger.info("Cleaning up Redis DB...")
+    #     clean_up_redis_db(memory_config)
+    #     logger.info("Redis DB cleanup complete.")
 
 if __name__ == "__main__":
     import asyncio
